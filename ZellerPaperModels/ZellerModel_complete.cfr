@@ -1,0 +1,257 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This model is based off of the model given in the following article:
+// M.Zeller, C.Prehofer, Modeling and effiecient solving of extra-functional properties for adaptation in
+// networked embedded real-time systems, J. Syst Architect. (2012), http://dx.doi.org/10.1016/j.sysarc.2012.11.003
+//
+// The Clafer implentation of the model was completed by:
+// Jordan A. Ross
+// 
+// The Clafer implementation follows the model given in the paper closely except for the following exceptions:
+// 1. EDF Scheduling is used - only periods of 10 are allowed for a task.
+// 2. There is no real number system so everything is scaled to integers.
+// 4. Topology has not been modeled (yet)
+// 6. WCTD is not modeled accurately.
+//
+// Date created: 14/10/2014
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------- Meta-Model (Abstract Clafer) ---------------------------------------- //
+
+
+abstract NetworkedDevice
+  bitrate ->> integer // The bitrate at which the network device sends messages over the bus (bit/s)
+  latency ->> integer // We represent the WCTD (worst case transmission delay) as latency for now
+  connectedTo -> CANBus // The bus which the device is physically linked to.
+    [parent in this.connectedFrom]
+
+abstract CANBus
+  bandwidth ->> integer // The maximum bandwidth that the bus can hold at one time.
+  connectedFrom -> NetworkedDevice * // The networked devices connected to bus
+    [this.connectedTo = parent]
+
+
+abstract ECU : NetworkedDevice
+  capacity ->> integer  // The size of the memory of the ECU
+  deployedFrom -> Function *  // Which functions are running on the ECU
+    [this.deployedTo = parent] // C1
+abstract Function
+  size ->> integer   // The worst case amount of memory that the function could use.
+  bitrate->> integer // The bitrate at which the function sends messages over the bus
+  wcet ->> integer   // The worst case exectuion time of the function. Caution here because this is associated with the ECU it is assigned
+    [wcet > 0]       // We want to only constrain the worst case execution time by being non-neg
+  deadline ->> integer // The deadline of the software function
+    [deadline > 0]
+  period ->> integer // The period of the software function
+    [period > 0]
+  latency ->> integer // We represent the WCTD (worst case transmission delay) as latency for now
+  tcParam ->> integer // We will use this to help our TC equations from being so clumsy
+    [tcParam = wcet + period + latency]
+  deployedTo -> ECU  // What ECU the function is deployed to.
+    [parent in this.deployedFrom]// C2
+
+// ------------------------ Keyless Entry System Model -------------------------------------------------//
+
+// Set of ECU's
+p1 : ECU
+  [capacity = 128]
+  [bitrate = sum deployedFrom.bitrate]
+  [latency = 0]
+  [connectedTo = can1]
+p2 : ECU
+  [capacity = 128]
+  [bitrate = sum deployedFrom.bitrate]
+  [latency = 0]
+  [connectedTo = can1]
+p3 : ECU
+  [capacity = 256]
+  [bitrate = sum deployedFrom.bitrate]
+  [latency = 0]
+  [connectedTo = can2]
+p4 : ECU
+  [capacity = 128]
+  [bitrate = sum deployedFrom.bitrate]
+  [latency = 0]
+  [connectedTo = can2]
+
+// Set of software functions
+sw1 : Function
+  [size = 64]
+  [bitrate = 80]
+  [deployedTo = p1]
+  [deadline = 25]
+  [period = 25]
+  [latency = 50]
+sw2 : Function
+  [size = 128]
+  [bitrate = 50] // We add all the bit rates out of s2 in Figure 2.
+  [(deployedTo = p2) || (deployedTo = p3)]
+  [deadline = 10]
+  [period = 10]
+  [latency = 100]
+sw3 : Function
+  [size = 64]
+  [bitrate = 320] // We add all the bit rates out of s3 in Figure 2.
+  [deadline = 25]
+  [period = 25]
+  [latency = 160]
+sw4 : Function
+  [size = 32]
+  [bitrate = 200] // We add all the bit rates out of s4 in Figure 2.
+  [deadline = 10]
+  [period = 10]
+  [latency = 100]
+sw5 : Function
+  [size = 32]
+  [bitrate = 200] // We add all the bit rates out of s5 in Figure 2.
+  [deadline = 10]
+  [period = 10]
+  [latency = 100]
+
+// Set of CAN busses
+can1 : CANBus
+  [bandwidth = 125000]
+can2 : CANBus
+  [bandwidth = 125000]
+
+
+// Set of Sensors
+antenna1 : NetworkedDevice
+  [bitrate = 80]
+  [latency = 100]
+  [connectedTo = can2]
+antenna2 : NetworkedDevice
+  [bitrate = 80]
+  [latency = 100]
+  [connectedTo = can2]
+antenna3 : NetworkedDevice
+  [bitrate = 80]
+  [latency = 100]
+  [connectedTo = can2]
+
+// Set of actuators
+doorLock1 : NetworkedDevice
+  [bitrate = 10]
+  [latency = 0]
+  [connectedTo = can2]
+doorLock2 : NetworkedDevice
+  [bitrate = 10]
+  [latency = 0]
+  [connectedTo = can2]
+doorLock3 : NetworkedDevice
+  [bitrate = 10]
+  [latency = 0]
+  [connectedTo = can2]
+doorLock4 : NetworkedDevice
+  [bitrate = 10]
+  [latency = 0]
+  [connectedTo = can2]
+lightUnit1 : NetworkedDevice
+  [bitrate = 100]
+  [latency = 0]
+  [connectedTo = can1]
+lightUnit2 : NetworkedDevice
+  [bitrate = 100]
+  [latency = 0]
+  [connectedTo = can1]
+lightUnit3 : NetworkedDevice
+  [bitrate = 100]
+  [latency = 0]
+  [connectedTo = can1]
+lightUnit4 : NetworkedDevice
+  [bitrate = 100]
+  [latency = 0]
+  [connectedTo = can1]
+
+// Resource allocation contraints -- Satisfying eq 7 in Zeller paper
+sizeOfCodeOnP1 ->> integer = sum p1.deployedFrom.size
+[sizeOfCodeOnP1 <= p1.capacity]
+
+sizeOfCodeOnP2 ->> integer = sum p2.deployedFrom.size
+[sizeOfCodeOnP2 <= p2.capacity]
+
+sizeOfCodeOnP3 ->> integer = sum p3.deployedFrom.size
+[sizeOfCodeOnP3 <= p3.capacity]
+
+sizeOfCodeOnP4 ->> integer = sum p4.deployedFrom.size
+[sizeOfCodeOnP4 <= p4.capacity]
+
+// In-vehicle network contraints -- Satifying eq 12 in Zeller paper
+sumBitRatesOnCan1 ->> integer = sum can1.connectedFrom.bitrate
+[sumBitRatesOnCan1 <= can1.bandwidth]
+sumBitRatesOnCan2 ->> integer = sum can2.connectedFrom.bitrate
+[sumBitRatesOnCan2 <= can2.bandwidth]
+
+// Contraints for EDF scheduling
+// Assuming all deadlines are 10 until we can implement divide on real numbers
+sumWCETOnP1 ->> integer = sum p1.deployedFrom.wcet
+[sumWCETOnP1 <= 10]
+sumWCETOnP2 ->> integer = sum p2.deployedFrom.wcet
+[sumWCETOnP2 <= 10]
+sumWCETOnP3 ->> integer = sum p3.deployedFrom.wcet
+[sumWCETOnP3 <= 10]
+sumWCETOnP4 ->> integer = sum p4.deployedFrom.wcet
+[sumWCETOnP4 <= 10]
+
+
+// Constraints for timing
+// End to end latency for sensor 1 to acutator 8
+// The path it takes is:
+//    sensor1 --> s1 --> s2 --> s3 --> s5 --> actuator8
+TC1_8 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit4.latency
+// The other contraints TCX_Y means from sensorX to acutatorY
+TC1_7 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit3.latency
+TC1_6 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit2.latency
+TC1_5 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit1.latency
+TC1_4 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock4.latency
+TC1_3 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock3.latency
+TC1_2 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock2.latency
+TC1_1 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock1.latency
+
+TC2_8 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit4.latency
+TC2_7 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit3.latency
+TC2_6 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit2.latency
+TC2_5 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit1.latency
+TC2_4 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock4.latency
+TC2_3 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock3.latency
+TC2_2 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock2.latency
+TC2_1 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock1.latency
+
+TC3_8 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit4.latency
+TC3_7 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit3.latency
+TC3_6 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit2.latency
+TC3_5 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit1.latency
+TC3_4 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock4.latency
+TC3_3 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock3.latency
+TC3_2 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock2.latency
+TC3_1 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock1.latency
+
+<< min TC1_8 >>
+<< min TC1_7 >>
+<< min TC1_6 >>
+<< min TC1_5 >>
+<< min TC1_4 >>
+<< min TC1_3 >>
+<< min TC1_2 >>
+<< min TC1_1 >>
+<< min TC2_8 >>
+<< min TC2_7 >>
+<< min TC2_6 >>
+<< min TC2_5 >>
+<< min TC2_4 >>
+<< min TC2_3 >>
+<< min TC2_2 >>
+<< min TC2_1 >>
+<< min TC3_8 >>
+<< min TC3_7 >>
+<< min TC3_6 >>
+<< min TC3_5 >>
+<< min TC3_4 >>
+<< min TC3_3 >>
+<< min TC3_2 >>
+<< min TC3_1 >>
+
+<< max sw1.wcet >> 
+<< max sw2.wcet >>
+<< max sw3.wcet >>
+<< max sw4.wcet >>
+<< max sw5.wcet >>
