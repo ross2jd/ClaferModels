@@ -20,7 +20,6 @@
 
 abstract NetworkedDevice
   bitrate ->> integer // The bitrate at which the network device sends messages over the bus (bit/s)
-  latency ->> integer // We represent the WCTD (worst case transmission delay) as latency for now
   connectedTo -> CANBus // The bus which the device is physically linked to.
     [parent in this.connectedFrom]
 
@@ -34,6 +33,7 @@ abstract ECU : NetworkedDevice
   capacity ->> integer  // The size of the memory of the ECU
   deployedFrom -> Function *  // Which functions are running on the ECU
     [this.deployedTo = parent] // C1
+
 abstract Function
   size ->> integer   // The worst case amount of memory that the function could use.
   bitrate->> integer // The bitrate at which the function sends messages over the bus
@@ -43,11 +43,28 @@ abstract Function
     [deadline > 0]
   period ->> integer // The period of the software function
     [period > 0]
-  latency ->> integer // We represent the WCTD (worst case transmission delay) as latency for now
-  tcParam ->> integer // We will use this to help our TC equations from being so clumsy
-    [tcParam = wcet + period + latency]
   deployedTo -> ECU  // What ECU the function is deployed to.
     [parent in this.deployedFrom]// C2
+
+abstract SWToSWDataFlow
+  sw_sender -> Function // Denotes the function that is transmitting the message
+  sw_reciever -> Function // Denotes the function that is receiving the message
+  wctd ->> integer
+  // This constraint says: If the sender and reciever are deployed on the same ECU then set the
+  // WCTD of the dataflow to 0. Otherwise set it to 100.
+  [wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
+
+abstract SensorToSWDataFlow
+  //sensor_sender -> NetworkedDevice // Denotes the sensor that is transmitting the message
+  //sw_reciever -> Function // Denotes the function that is receiving the message
+  wctd ->> integer
+  [wctd = 100]
+
+abstract SWToActuatorDataFlow
+  //sw_sender -> Function // Denotes the function that is transmitting the message
+  //acutator_receiver -> NetworkedDevice ? // Denotes the actutator that is receiving the message
+  wctd ->> integer
+  [wctd = 100]
 
 // ------------------------ Keyless Entry System Model -------------------------------------------------//
 
@@ -55,57 +72,68 @@ abstract Function
 p1 : ECU
   [capacity = 128]
   [bitrate = sum deployedFrom.bitrate]
-  [latency = 0]
   [connectedTo = can1]
 p2 : ECU
   [capacity = 128]
   [bitrate = sum deployedFrom.bitrate]
-  [latency = 0]
   [connectedTo = can1]
 p3 : ECU
   [capacity = 256]
   [bitrate = sum deployedFrom.bitrate]
-  [latency = 0]
   [connectedTo = can2]
 p4 : ECU
   [capacity = 128]
   [bitrate = sum deployedFrom.bitrate]
-  [latency = 0]
   [connectedTo = can2]
 
 // Set of software functions
 sw1 : Function
+  dataflow_sw1_sw2 : SWToSWDataFlow
+    [sw_sender = sw1]
+    [sw_reciever = sw2]
   [size = 64]
   [bitrate = 80]
   [deployedTo = p1]
   [deadline = 25]
   [period = 25]
-  [latency = 50]
 sw2 : Function
+  dataflow_sw2_sw3 : SWToSWDataFlow
+    [sw_sender = sw2]
+    [sw_reciever = sw3]
+  dataflow_sw2_a1 : SWToActuatorDataFlow
+  dataflow_sw2_a2 : SWToActuatorDataFlow
+  dataflow_sw2_a3 : SWToActuatorDataFlow
+  dataflow_sw2_a4 : SWToActuatorDataFlow
   [size = 128]
   [bitrate = 50] // We add all the bit rates out of s2 in Figure 2.
   [(deployedTo = p2) || (deployedTo = p3)]
   [deadline = 10]
   [period = 10]
-  [latency = 100]
 sw3 : Function
+  dataflow_sw3_sw4 : SWToSWDataFlow
+    [sw_sender = sw3]
+    [sw_reciever = sw4]
+  dataflow_sw3_sw5 : SWToSWDataFlow
+    [sw_sender = sw3]
+    [sw_reciever = sw5]
   [size = 64]
   [bitrate = 320] // We add all the bit rates out of s3 in Figure 2.
   [deadline = 25]
   [period = 25]
-  [latency = 160]
 sw4 : Function
+  dataflow_sw4_a5 : SWToActuatorDataFlow
+  dataflow_sw4_a6 : SWToActuatorDataFlow
   [size = 32]
   [bitrate = 200] // We add all the bit rates out of s4 in Figure 2.
   [deadline = 10]
   [period = 10]
-  [latency = 100]
 sw5 : Function
+  dataflow_sw5_a7 : SWToActuatorDataFlow
+  dataflow_sw5_a8 : SWToActuatorDataFlow
   [size = 32]
   [bitrate = 200] // We add all the bit rates out of s5 in Figure 2.
   [deadline = 10]
   [period = 10]
-  [latency = 100]
 
 // Set of CAN busses
 can1 : CANBus
@@ -116,50 +144,42 @@ can2 : CANBus
 
 // Set of Sensors
 antenna1 : NetworkedDevice
+  dataflow_s1_sw1 : SensorToSWDataFlow
   [bitrate = 80]
-  [latency = 100]
   [connectedTo = can2]
 antenna2 : NetworkedDevice
+  dataflow_s2_sw1 : SensorToSWDataFlow
   [bitrate = 80]
-  [latency = 100]
   [connectedTo = can2]
 antenna3 : NetworkedDevice
+  dataflow_s3_sw1 : SensorToSWDataFlow
   [bitrate = 80]
-  [latency = 100]
   [connectedTo = can2]
 
 // Set of actuators
 doorLock1 : NetworkedDevice
   [bitrate = 10]
-  [latency = 0]
   [connectedTo = can2]
 doorLock2 : NetworkedDevice
   [bitrate = 10]
-  [latency = 0]
   [connectedTo = can2]
 doorLock3 : NetworkedDevice
   [bitrate = 10]
-  [latency = 0]
   [connectedTo = can2]
 doorLock4 : NetworkedDevice
   [bitrate = 10]
-  [latency = 0]
   [connectedTo = can2]
 lightUnit1 : NetworkedDevice
   [bitrate = 100]
-  [latency = 0]
   [connectedTo = can1]
 lightUnit2 : NetworkedDevice
   [bitrate = 100]
-  [latency = 0]
   [connectedTo = can1]
 lightUnit3 : NetworkedDevice
   [bitrate = 100]
-  [latency = 0]
   [connectedTo = can1]
 lightUnit4 : NetworkedDevice
   [bitrate = 100]
-  [latency = 0]
   [connectedTo = can1]
 
 // Resource allocation contraints -- Satisfying eq 7 in Zeller paper
@@ -192,38 +212,37 @@ sumWCETOnP3 ->> integer = sum p3.deployedFrom.wcet
 sumWCETOnP4 ->> integer = sum p4.deployedFrom.wcet
 [sumWCETOnP4 <= 10]
 
-
-// Constraints for timing
 // End to end latency for sensor 1 to acutator 8
 // The path it takes is:
 //    sensor1 --> s1 --> s2 --> s3 --> s5 --> actuator8
-TC1_8 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit4.latency
+TC1_8 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +sw5.dataflow_sw5_a8.wctd
 // The other contraints TCX_Y means from sensorX to acutatorY
-TC1_7 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit3.latency
-TC1_6 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit2.latency
-TC1_5 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit1.latency
-TC1_4 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock4.latency
-TC1_3 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock3.latency
-TC1_2 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock2.latency
-TC1_1 ->> integer = antenna1.latency + sw1.tcParam + sw2.tcParam + doorLock1.latency
+TC1_7 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +sw5.dataflow_sw5_a7.wctd
+TC1_6 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +sw4.dataflow_sw4_a6.wctd
+TC1_5 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +sw4.dataflow_sw4_a5.wctd
+TC1_4 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a4.wctd
+TC1_3 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a3.wctd
+TC1_2 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a2.wctd
+TC1_1 ->> integer = antenna1.dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a1.wctd
 
-TC2_8 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit4.latency
-TC2_7 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit3.latency
-TC2_6 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit2.latency
-TC2_5 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit1.latency
-TC2_4 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock4.latency
-TC2_3 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock3.latency
-TC2_2 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock2.latency
-TC2_1 ->> integer = antenna2.latency + sw1.tcParam + sw2.tcParam + doorLock1.latency
+TC2_8 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +sw5.dataflow_sw5_a8.wctd
+TC2_7 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +sw5.dataflow_sw5_a7.wctd
+TC2_6 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +sw4.dataflow_sw4_a6.wctd
+TC2_5 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +sw4.dataflow_sw4_a5.wctd
+TC2_4 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a4.wctd
+TC2_3 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a3.wctd
+TC2_2 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a2.wctd
+TC2_1 ->> integer = antenna2.dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a1.wctd
 
-TC3_8 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit4.latency
-TC3_7 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw5.tcParam + lightUnit3.latency
-TC3_6 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit2.latency
-TC3_5 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + sw3.tcParam + sw4.tcParam + lightUnit1.latency
-TC3_4 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock4.latency
-TC3_3 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock3.latency
-TC3_2 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock2.latency
-TC3_1 ->> integer = antenna3.latency + sw1.tcParam + sw2.tcParam + doorLock1.latency
+
+TC3_8 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +sw5.dataflow_sw5_a8.wctd
+TC3_7 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +sw5.dataflow_sw5_a7.wctd
+TC3_6 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +sw4.dataflow_sw4_a6.wctd
+TC3_5 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + sw3.dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +sw4.dataflow_sw4_a5.wctd
+TC3_4 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a4.wctd
+TC3_3 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a3.wctd
+TC3_2 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a2.wctd
+TC3_1 ->> integer = antenna3.dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + sw1.dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + sw2.dataflow_sw2_a1.wctd
 
 << min TC1_8 >>
 << min TC1_7 >>
