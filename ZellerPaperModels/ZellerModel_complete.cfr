@@ -9,8 +9,7 @@
 // The Clafer implementation follows the model given in the paper closely except for the following exceptions:
 // 1. EDF Scheduling is used - only periods of 10 are allowed for a task.
 // 2. There is no real number system so everything is scaled to integers.
-// 4. Topology has not been modeled (yet)
-// 6. WCTD is not modeled accurately.
+// 3. WCTD is not modeled accurately.
 //
 // Date created: 14/10/2014
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +44,9 @@ abstract Function
     [period > 0]
   deployedTo -> ECU  // What ECU the function is deployed to.
     [parent in this.deployedFrom]// C2
+  connectedTo -> CANBus
+    // We use this to store the CAN bus we are connected to is the same as the ECU we are deployed on.
+    [connectedTo.ref = deployedTo.connectedTo.ref] 
 
 abstract SWToSWDataFlow
   sw_sender -> Function // Denotes the function that is transmitting the message
@@ -55,7 +57,7 @@ abstract SWToSWDataFlow
   [wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
   // // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
   // num_data_bytes ->> integer // The number of bytes that needs to be sent
-  // bitrate ->> integer // The transmission rate of bits per second
+  bitrate ->> integer // The transmission rate of bits per second
   // xor identifier
   //   bit_id_11// (55+10*num_data_bytes)/bitrate
   //   bit_id_29// (80+10*num_data_bytes)/bitrate
@@ -65,16 +67,19 @@ abstract SWToSWDataFlow
   //   else (if ((bit_id_29) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
   //     then ((80+10*num_data_bytes)/bitrate)
   //     else 0)]
+  reqGateBandwidth ->> integer
+  // We only need gateway bandwidth if our two sofware functions are not connected to the same bus.
+  [reqGateBandwidth = if (sw_sender.connectedTo.ref != sw_reciever.connectedTo.ref) then bitrate else 0]
 
 
 abstract SensorToSWDataFlow
-  //sensor_sender -> NetworkedDevice // Denotes the sensor that is transmitting the message
-  //sw_reciever -> Function // Denotes the function that is receiving the message
+  sensor_sender -> NetworkedDevice // Denotes the sensor that is transmitting the message
+  sw_reciever -> Function // Denotes the function that is receiving the message
   wctd ->> integer
   [wctd = 100]
   // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
   // num_data_bytes ->> integer // The number of bytes that needs to be sent
-  // bitrate ->> integer // The transmission rate of bits per second
+  bitrate ->> integer // The transmission rate of bits per second
   // xor identifier
   //   bit_id_11// (55+10*num_data_bytes)/bitrate
   //   bit_id_29// (80+10*num_data_bytes)/bitrate
@@ -84,16 +89,19 @@ abstract SensorToSWDataFlow
   //     else (if (bit_id_29)
   //       then ((80+10*num_data_bytes)/bitrate)
   //       else 0)]
+  reqGateBandwidth ->> integer
+  // We only need gateway bandwidth if our sensor and software function are not connected to the same bus.
+  [reqGateBandwidth = if (sensor_sender.connectedTo.ref != sw_reciever.connectedTo.ref) then bitrate else 0]
 
 
 abstract SWToActuatorDataFlow
-  //sw_sender -> Function // Denotes the function that is transmitting the message
-  //acutator_receiver -> NetworkedDevice ? // Denotes the actutator that is receiving the message
+  sw_sender -> Function // Denotes the function that is transmitting the message
+  acutator_receiver -> NetworkedDevice // Denotes the actutator that is receiving the message
   wctd ->> integer
   [wctd = 100]
   // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
   // num_data_bytes ->> integer // The number of bytes that needs to be sent
-  // bitrate ->> integer // The transmission rate of bits per second
+  bitrate ->> integer // The transmission rate of bits per second
   // xor identifier
   //   bit_id_11// (55+10*num_data_bytes)/bitrate
   //   bit_id_29// (80+10*num_data_bytes)/bitrate
@@ -103,6 +111,9 @@ abstract SWToActuatorDataFlow
   //     else (if (bit_id_29)
   //       then ((80+10*num_data_bytes)/bitrate)
   //       else 0)]
+  reqGateBandwidth ->> integer
+  // We only need gateway bandwidth if our actuator and software function are not connected to the same bus.
+  [reqGateBandwidth = if (sw_sender.connectedTo.ref != acutator_receiver.connectedTo.ref) then bitrate else 0]
 
 // ------------------------ Keyless Entry System Model -------------------------------------------------//
 
@@ -129,6 +140,7 @@ sw1 : Function
   dataflow_sw1_sw2 : SWToSWDataFlow
     [sw_sender = sw1]
     [sw_reciever = sw2]
+    [bitrate = 80]
   // dataflow_sw1_sw2 : SWToSWDataFlow
   //   [sw_sender = sw1]
   //   [sw_reciever = sw2]
@@ -144,6 +156,7 @@ sw2 : Function
   dataflow_sw2_sw3 : SWToSWDataFlow
     [sw_sender = sw2]
     [sw_reciever = sw3]
+    [bitrate = 10]
   // dataflow_sw2_sw3 : SWToSWDataFlow
   //   [sw_sender = sw2]
   //   [sw_reciever = sw3]
@@ -151,18 +164,30 @@ sw2 : Function
   //   [bitrate = 10]
   //   [bit_id_11]
   dataflow_sw2_a1 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock1]
+    [bitrate = 10]
     // [num_data_bytes = 100]
     // [bitrate = 10]
     // [bit_id_11]
   dataflow_sw2_a2 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock2]
+    [bitrate = 10]
     // [num_data_bytes = 100]
     // [bitrate = 10]
     // [bit_id_11]
   dataflow_sw2_a3 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock3]
+    [bitrate = 10]
     // [num_data_bytes = 100]
     // [bitrate = 10]
     // [bit_id_11]
   dataflow_sw2_a4 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock4]
+    [bitrate = 10]
     // [num_data_bytes = 100]
     // [bitrate = 10]
     // [bit_id_11]
@@ -175,9 +200,11 @@ sw3 : Function
   dataflow_sw3_sw4 : SWToSWDataFlow
     [sw_sender = sw3]
     [sw_reciever = sw4]
+    [bitrate = 160]
   dataflow_sw3_sw5 : SWToSWDataFlow
     [sw_sender = sw3]
     [sw_reciever = sw5]
+    [bitrate = 160]
   // dataflow_sw3_sw4 : SWToSWDataFlow
   //   [sw_sender = sw3]
   //   [sw_reciever = sw4]
@@ -196,12 +223,16 @@ sw3 : Function
   [period = 25]
 sw4 : Function
   dataflow_sw4_a5 : SWToActuatorDataFlow
+    [sw_sender = sw4]
+    [acutator_receiver = lightUnit1]
     // [num_data_bytes = 100]
-    // [bitrate = 10]
+    [bitrate = 100]
     // [bit_id_11]
-  dataflow_sw4_a6 : SWToActuatorDataFlow  
+  dataflow_sw4_a6 : SWToActuatorDataFlow
+    [sw_sender = sw4]
+    [acutator_receiver = lightUnit2]
     // [num_data_bytes = 100]
-    // [bitrate = 10]
+    [bitrate = 100]
     // [bit_id_11]
   [size = 32]
   [bitrate = 200] // We add all the bit rates out of s4 in Figure 2.
@@ -209,12 +240,16 @@ sw4 : Function
   [period = 10]
 sw5 : Function
   dataflow_sw5_a7 : SWToActuatorDataFlow
+    [sw_sender = sw5]
+    [acutator_receiver = lightUnit3]
     // [num_data_bytes = 100]
-    // [bitrate = 10]
+    [bitrate = 100]
     // [bit_id_11]
   dataflow_sw5_a8 : SWToActuatorDataFlow
+    [sw_sender = sw5]
+    [acutator_receiver = lightUnit4]
     // [num_data_bytes = 100]
-    // [bitrate = 10]
+    [bitrate = 100]
     // [bit_id_11]
   [size = 32]
   [bitrate = 200] // We add all the bit rates out of s5 in Figure 2.
@@ -231,41 +266,50 @@ can2 : CANBus
 // Set of Sensors
 antenna1 : NetworkedDevice
   dataflow_s1_sw1 : SensorToSWDataFlow
+    [sensor_sender = antenna1]
+    [sw_reciever = sw1]
+    [bitrate = 80]
   [bitrate = 80]
   [connectedTo = can2]
 antenna2 : NetworkedDevice
   dataflow_s2_sw1 : SensorToSWDataFlow
+    [sensor_sender = antenna2]
+    [sw_reciever = sw1]
+    [bitrate = 80]
   [bitrate = 80]
   [connectedTo = can2]
 antenna3 : NetworkedDevice
   dataflow_s3_sw1 : SensorToSWDataFlow
+    [sensor_sender = antenna3]
+    [sw_reciever = sw1]
+    [bitrate = 80]
   [bitrate = 80]
   [connectedTo = can2]
 
 // Set of actuators
 doorLock1 : NetworkedDevice
-  [bitrate = 10]
+  [bitrate = 0]
   [connectedTo = can2]
 doorLock2 : NetworkedDevice
-  [bitrate = 10]
+  [bitrate = 0]
   [connectedTo = can2]
 doorLock3 : NetworkedDevice
-  [bitrate = 10]
+  [bitrate = 0]
   [connectedTo = can2]
 doorLock4 : NetworkedDevice
-  [bitrate = 10]
+  [bitrate = 0]
   [connectedTo = can2]
 lightUnit1 : NetworkedDevice
-  [bitrate = 100]
+  [bitrate = 0]
   [connectedTo = can1]
 lightUnit2 : NetworkedDevice
-  [bitrate = 100]
+  [bitrate = 0]
   [connectedTo = can1]
 lightUnit3 : NetworkedDevice
-  [bitrate = 100]
+  [bitrate = 0]
   [connectedTo = can1]
 lightUnit4 : NetworkedDevice
-  [bitrate = 100]
+  [bitrate = 0]
   [connectedTo = can1]
 
 // Resource allocation contraints -- Satisfying eq 7 in Zeller paper
@@ -287,6 +331,9 @@ sumBitRatesOnCan1 ->> integer = sum can1.connectedFrom.bitrate
 sumBitRatesOnCan2 ->> integer = sum can2.connectedFrom.bitrate
 [sumBitRatesOnCan2 <= can2.bandwidth]
 
+// Toplogy constraint
+sumReqGatewayBandwidth ->> integer = dataflow_s1_sw1.reqGateBandwidth + dataflow_s2_sw1.reqGateBandwidth + dataflow_s3_sw1.reqGateBandwidth + dataflow_sw1_sw2.reqGateBandwidth + dataflow_sw2_a1.reqGateBandwidth + dataflow_sw2_a2.reqGateBandwidth + dataflow_sw2_a3.reqGateBandwidth + dataflow_sw2_a4.reqGateBandwidth + dataflow_sw2_sw3.reqGateBandwidth + dataflow_sw3_sw4.reqGateBandwidth + dataflow_sw3_sw5.reqGateBandwidth + dataflow_sw4_a5.reqGateBandwidth + dataflow_sw4_a6.reqGateBandwidth + dataflow_sw5_a7.reqGateBandwidth + dataflow_sw5_a8.reqGateBandwidth
+[sumReqGatewayBandwidth <= 250000]
 // Contraints for EDF scheduling
 // Assuming all deadlines are 10 until we can implement divide on real numbers
 sumWCETOnP1 ->> integer = sum p1.deployedFrom.wcet

@@ -206,7 +206,7 @@
 //   [size = 1]
 //   [bitrate = 20]
 // sw5 : Function
-//   [size = 10]
+//   [size = 1]
 //   [bitrate = 20]
 
 // // Set of CAN busses
@@ -453,72 +453,203 @@
 
 // End test code 9
 
-// Start test code 10 -- Allocation sets and multiple WCTD
+// // Start test code 10 -- Allocation sets and multiple WCTD
 
-abstract ECU
+// abstract ECU
+//   deployedFrom -> Function *
+//     [this.deployedTo = parent] // C1
+// abstract Function
+//   deployedTo -> ECU
+//     [parent in this.deployedFrom]// C2
+
+// abstract DataFlow
+//   sw_sender -> Function ? // Denotes the function that is transmitting the message if there is one
+//   sw_reciever -> Function ? // Denotes the function that is receiving the message if there is one
+//   //sensor_sender : Device ? // Denotes the sensor that is transmitting the message if there is one
+//   //acutator_receiver : Device ? // Denotes the actutator that is receiving the message if there is one
+//   // Formulas from CAN schedulability analysis paper
+//   num_data_bytes ->> integer // The number of bytes that needs to be sent
+//   bitrate ->> integer // The transmission rate of bits per second
+//   xor identifier
+//     bit_id_11// (55+10*num_data_bytes)/bitrate
+//     bit_id_29// (80+10*num_data_bytes)/bitrate
+//   wctd ->> integer
+//   [wctd = if ((bit_id_11) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
+//     then ((55+10*num_data_bytes)/bitrate) 
+//     else (if ((bit_id_29) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
+//       then ((80+10*num_data_bytes)/bitrate)
+//       else 0)]
+//   //[wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
+
+// p1 : ECU
+// p2 : ECU
+// p3 : ECU
+// p4 : ECU
+// sw1 : Function
+//   [deployedTo = p1]
+//   dataflow_s1_s2 : DataFlow
+//     [sw_sender = sw1]
+//     [sw_reciever = sw2]
+//     [num_data_bytes = 100]
+//     [bitrate = 10]
+//     [bit_id_29]
+// sw2 : Function
+//   [(deployedTo = p2) || (deployedTo = p3)]
+//   dataflow_s2_s3 : DataFlow
+//     [sw_sender = sw2]
+//     [sw_reciever = sw3]
+//     [num_data_bytes = 100]
+//     [bitrate = 10]
+//     [bit_id_11]
+// sw3 : Function
+//   dataflow_s3_s4 : DataFlow
+//     [sw_sender = sw3]
+//     [sw_reciever = sw4]
+//     [num_data_bytes = 100]
+//     [bitrate = 10]
+//     [bit_id_29]
+//   dataflow_s3_s5 : DataFlow
+//     [sw_sender = sw3]
+//     [sw_reciever = sw5]
+//     [num_data_bytes = 100]
+//     [bitrate = 10]
+//     [bit_id_29]
+// sw4 : Function
+// sw5 : Function
+
+// TC1 ->> integer
+// [TC1 = dataflow_s1_s2.wctd + dataflow_s2_s3.wctd + dataflow_s3_s4.wctd + dataflow_s3_s5.wctd]
+
+// // End test code 10
+
+// Start test code 7 -- Allocation sets, Resource contraints, in-vehicle networks
+abstract NetworkedDevice
+  bitrate ->> integer
+  connectedTo -> CANBus // The bus which the device is physically linked to.
+    [parent in this.connectedFrom]
+
+abstract Sensor : NetworkedDevice
+  bandwidth ->> integer
+ 
+abstract Actuator : NetworkedDevice
+  bandwidth ->> integer
+
+abstract CANBus
+  bandwidth ->> integer
+  connectedFrom -> NetworkedDevice * // The networked devices connected to bus
+    [this.connectedTo = parent]
+
+
+abstract ECU : NetworkedDevice
+  capacity ->> integer
   deployedFrom -> Function *
     [this.deployedTo = parent] // C1
 abstract Function
+  size ->> integer
+  bitrate->> integer
   deployedTo -> ECU
     [parent in this.deployedFrom]// C2
+  connectedTo -> CANBus
+    [connectedTo.ref = deployedTo.connectedTo.ref]
 
-abstract DataFlow
-  sw_sender -> Function ? // Denotes the function that is transmitting the message if there is one
-  sw_reciever -> Function ? // Denotes the function that is receiving the message if there is one
-  //sensor_sender : Device ? // Denotes the sensor that is transmitting the message if there is one
-  //acutator_receiver : Device ? // Denotes the actutator that is receiving the message if there is one
-  // Formulas from CAN schedulability analysis paper
-  num_data_bytes ->> integer // The number of bytes that needs to be sent
-  bitrate ->> integer // The transmission rate of bits per second
-  xor identifier
-    bit_id_11// (55+10*num_data_bytes)/bitrate
-    bit_id_29// (80+10*num_data_bytes)/bitrate
-  wctd ->> integer
-  [wctd = if ((bit_id_11) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
-    then ((55+10*num_data_bytes)/bitrate) 
-    else (if ((bit_id_29) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
-      then ((80+10*num_data_bytes)/bitrate)
-      else 0)]
-  //[wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
-
+// Set of ECU's
 p1 : ECU
+  [capacity = 1]
+  [bitrate = sum deployedFrom.bitrate]
+  [connectedTo = can1]
 p2 : ECU
+  [capacity = 2]
+  [bitrate = sum deployedFrom.bitrate]
+  [connectedTo = can1]
 p3 : ECU
+  [capacity = 3]
+  [bitrate = sum deployedFrom.bitrate]
+  [connectedTo = can2]
 p4 : ECU
+  [capacity = 1]
+  [bitrate = sum deployedFrom.bitrate]
+  [connectedTo = can2]
+
+// Set of software functions
 sw1 : Function
+  [size = 1]
+  [bitrate = 8]
   [deployedTo = p1]
-  dataflow_s1_s2 : DataFlow
-    [sw_sender = sw1]
-    [sw_reciever = sw2]
-    [num_data_bytes = 100]
-    [bitrate = 10]
-    [bit_id_29]
 sw2 : Function
+  [size = 1]
+  [bitrate = 1]
   [(deployedTo = p2) || (deployedTo = p3)]
-  dataflow_s2_s3 : DataFlow
-    [sw_sender = sw2]
-    [sw_reciever = sw3]
-    [num_data_bytes = 100]
-    [bitrate = 10]
-    [bit_id_11]
 sw3 : Function
-  dataflow_s3_s4 : DataFlow
-    [sw_sender = sw3]
-    [sw_reciever = sw4]
-    [num_data_bytes = 100]
-    [bitrate = 10]
-    [bit_id_29]
-  dataflow_s3_s5 : DataFlow
-    [sw_sender = sw3]
-    [sw_reciever = sw5]
-    [num_data_bytes = 100]
-    [bitrate = 10]
-    [bit_id_29]
+  [size = 1]
+  [bitrate = 32]
 sw4 : Function
+  [size = 1]
+  [bitrate = 20]
 sw5 : Function
+  [size = 1]
+  [bitrate = 20]
 
-TC1 ->> integer
-[TC1 = dataflow_s1_s2.wctd + dataflow_s2_s3.wctd + dataflow_s3_s4.wctd + dataflow_s3_s5.wctd]
+// Set of CAN busses
+can1 : CANBus
+  [bandwidth = 125]
+can2 : CANBus
+  [bandwidth = 125]
 
-// End test code 10
 
+// Set of Sensors
+antenna1 : NetworkedDevice
+  [bitrate = 8]
+  [connectedTo = can2]
+
+antenna2 : NetworkedDevice
+  [bitrate = 8]
+  [connectedTo = can2]
+
+antenna3 : NetworkedDevice
+  [bitrate = 8]
+  [connectedTo = can2]
+
+// Set of actuators
+doorLock1 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can2]
+doorLock2 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can2]
+doorLock3 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can2]
+doorLock4 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can2]
+lightUnit1 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can1]
+lightUnit2 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can1]
+lightUnit3 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can1]
+lightUnit4 : NetworkedDevice
+  [bitrate = 1]
+  [connectedTo = can1]
+
+sizeOfCodeOnP1 ->> integer = sum p1.deployedFrom.size
+[sizeOfCodeOnP1 <= p1.capacity]
+
+sizeOfCodeOnP2 ->> integer = sum p2.deployedFrom.size
+[sizeOfCodeOnP2 <= p2.capacity]
+
+sizeOfCodeOnP3 ->> integer = sum p3.deployedFrom.size
+[sizeOfCodeOnP3 <= p3.capacity]
+
+sizeOfCodeOnP4 ->> integer = sum p4.deployedFrom.size
+[sizeOfCodeOnP4 <= p4.capacity]
+
+sumBitRatesOnCan1 ->> integer = sum can1.connectedFrom.bitrate
+[sumBitRatesOnCan1 <= can1.bandwidth]
+sumBitRatesOnCan2 ->> integer = sum can2.connectedFrom.bitrate
+[sumBitRatesOnCan2 <= can2.bandwidth]
+
+// End test code 7

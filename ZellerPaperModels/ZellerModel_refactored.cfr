@@ -1,0 +1,342 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This model is based off of the model given in the following article:
+// M.Zeller, C.Prehofer, Modeling and effiecient solving of extra-functional properties for adaptation in
+// networked embedded real-time systems, J. Syst Architect. (2012), http://dx.doi.org/10.1016/j.sysarc.2012.11.003
+//
+// The Clafer implentation of the model was completed by:
+// Jordan A. Ross
+// 
+// The Clafer implementation follows the model given in the paper closely except for the following exceptions:
+// 1. EDF Scheduling is used - only periods of 10 are allowed for a task.
+// 2. There is no real number system so everything is scaled to integers.
+// 3. WCTD is not modeled accurately.
+//
+// Date created: 14/10/2014
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------- Meta-Model (Abstract Clafer) ---------------------------------------- //
+abstract NetworkedDevice
+  bitrate ->> integer // The bitrate at which the network device sends messages over the bus (bit/s)
+  connectedTo -> CANBus // The bus which the device is physically linked to.
+    [parent in this.connectedFrom]
+
+abstract CANBus
+  bandwidth ->> integer // The maximum bandwidth that the bus can hold at one time.
+  connectedFrom -> NetworkedDevice * // The networked devices connected to bus
+    [this.connectedTo = parent]
+
+
+abstract ECU : NetworkedDevice
+  capacity ->> integer  // The size of the memory of the ECU
+  deployedFrom -> Function *  // Which functions are running on the ECU
+    [this.deployedTo = parent] // C1
+
+abstract Function
+  size ->> integer   // The worst case amount of memory that the function could use.
+  bitrate->> integer // The bitrate at which the function sends messages over the bus
+  wcet ->> integer   // The worst case exectuion time of the function. Caution here because this is associated with the ECU it is assigned
+    [wcet > 0]       // We want to only constrain the worst case execution time by being non-neg
+  deadline ->> integer // The deadline of the software function
+    [deadline > 0]
+  period ->> integer // The period of the software function
+    [period > 0]
+  deployedTo -> ECU  // What ECU the function is deployed to.
+    [parent in this.deployedFrom]// C2
+  connectedTo -> CANBus
+    // We use this to store the CAN bus we are connected to is the same as the ECU we are deployed on.
+    [connectedTo.ref = deployedTo.connectedTo.ref] 
+
+abstract DataFlow
+  bitrate ->> integer // The transmission rate of bits per second
+  wctd ->> integer
+  reqGateBandwidth ->> integer
+
+abstract SWToSWDataFlow : DataFlow
+  sw_sender -> Function // Denotes the function that is transmitting the message
+  sw_reciever -> Function // Denotes the function that is receiving the message
+  // This constraint says: If the sender and reciever are deployed on the same ECU then set the
+  // WCTD of the dataflow to 0. Otherwise set it to 100.
+  [wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
+  // We only need gateway bandwidth if our two sofware functions are not connected to the same bus.
+  [reqGateBandwidth = if (sw_sender.connectedTo.ref != sw_reciever.connectedTo.ref) then bitrate else 0]
+
+
+abstract SensorToSWDataFlow : DataFlow
+  sensor_sender -> NetworkedDevice // Denotes the sensor that is transmitting the message
+  sw_reciever -> Function // Denotes the function that is receiving the message
+  [wctd = 100]
+  // We only need gateway bandwidth if our sensor and software function are not connected to the same bus.
+  [reqGateBandwidth = if (sensor_sender.connectedTo.ref != sw_reciever.connectedTo.ref) then bitrate else 0]
+
+
+abstract SWToActuatorDataFlow : DataFlow
+  sw_sender -> Function // Denotes the function that is transmitting the message
+  acutator_receiver -> NetworkedDevice // Denotes the actutator that is receiving the message
+  [wctd = 100]
+  // We only need gateway bandwidth if our actuator and software function are not connected to the same bus.
+  [reqGateBandwidth = if (sw_sender.connectedTo.ref != acutator_receiver.connectedTo.ref) then bitrate else 0]
+
+// ------------------------ Keyless Entry System Model -------------------------------------------------//
+
+KeylessEntrySystem
+  // We define the set of software functions, ECUs, busses, sensors, actuators, and dataflows here.
+  softwareFunctions -> Function 5
+  [softwareFunctions = sw1, sw2, sw3, sw4, sw5]
+  ecus -> ECU 4
+  [ecus = p1, p2, p3, p4]
+  busses -> CANBus 2
+  [busses = can1, can2]
+  sensors -> NetworkedDevice 3
+  [sensors = antenna1, antenna2, antenna3]
+  actuators -> NetworkedDevice 8
+  [actuators = doorLock1, doorLock2, doorLock3, doorLock4, lightUnit1, lightUnit2, lightUnit3, lightUnit4]
+  dataflows -> DataFlow 15
+  [dataflows = dataflow_sw1_sw2, dataflow_sw2_sw3, dataflow_sw2_a1, dataflow_sw2_a2, 
+    dataflow_sw2_a3, dataflow_sw2_a4, dataflow_sw3_sw4, dataflow_sw3_sw5, 
+    dataflow_sw4_a5, dataflow_sw4_a6, dataflow_sw5_a7, dataflow_sw5_a8,
+    dataflow_s1_sw1, dataflow_s2_sw1, dataflow_s3_sw1]
+
+  // We now define each of the individual models in the system
+  // Software functions
+  sw1 : Function
+    [size = 64]
+    [bitrate = 80]
+    [deployedTo = p1]
+    [deadline = 25]
+    [period = 25]
+  sw2 : Function
+    [size = 128]
+    [bitrate = 50] // We add all the bit rates out of s2 in Figure 2.
+    [(deployedTo = p2) || (deployedTo = p3)]
+    [deadline = 10]
+    [period = 10]
+  sw3 : Function
+    [size = 64]
+    [bitrate = 320] // We add all the bit rates out of s3 in Figure 2.
+    [deadline = 25]
+    [period = 25]
+  sw4 : Function
+    [size = 32]
+    [bitrate = 200] // We add all the bit rates out of s4 in Figure 2.
+    [deadline = 10]
+    [period = 10]
+  sw5 : Function
+    [size = 32]
+    [bitrate = 200] // We add all the bit rates out of s5 in Figure 2.
+    [deadline = 10]
+    [period = 10]
+
+  // ECUs
+  p1 : ECU
+    [capacity = 128]
+    [bitrate = sum deployedFrom.bitrate]
+    [connectedTo = can1]
+  p2 : ECU
+    [capacity = 128]
+    [bitrate = sum deployedFrom.bitrate]
+    [connectedTo = can1]
+  p3 : ECU
+    [capacity = 256]
+    [bitrate = sum deployedFrom.bitrate]
+    [connectedTo = can2]
+  p4 : ECU
+    [capacity = 128]
+    [bitrate = sum deployedFrom.bitrate]
+    [connectedTo = can2]
+
+  // Busses
+  can1 : CANBus
+    [bandwidth = 125000]
+  can2 : CANBus
+    [bandwidth = 125000]
+
+  // Sensors
+  antenna1 : NetworkedDevice
+    [bitrate = 80]
+    [connectedTo = can2]
+  antenna2 : NetworkedDevice
+    [bitrate = 80]
+    [connectedTo = can2]
+  antenna3 : NetworkedDevice
+    [bitrate = 80]
+    [connectedTo = can2]
+
+  // Actuators
+  doorLock1 : NetworkedDevice
+    [bitrate = 0] // We don't have any bit rate for the acutator because it is not sending any messages
+    [connectedTo = can2]
+  doorLock2 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+  doorLock3 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+  doorLock4 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+  lightUnit1 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+  lightUnit2 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+  lightUnit3 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+  lightUnit4 : NetworkedDevice
+    [bitrate = 0]
+    [connectedTo = can2]
+
+  // Dataflows
+  dataflow_s1_sw1 : SensorToSWDataFlow
+    [sensor_sender = antenna1]
+    [sw_reciever = sw1]
+    [bitrate = 80]
+  dataflow_s2_sw1 : SensorToSWDataFlow
+    [sensor_sender = antenna2]
+    [sw_reciever = sw1]
+    [bitrate = 80]
+  dataflow_s3_sw1 : SensorToSWDataFlow
+    [sensor_sender = antenna3]
+    [sw_reciever = sw1]
+    [bitrate = 80]
+  dataflow_sw1_sw2 : SWToSWDataFlow
+    [sw_sender = sw1]
+    [sw_reciever = sw2]
+    [bitrate = 80]
+  dataflow_sw2_sw3 : SWToSWDataFlow
+    [sw_sender = sw2]
+    [sw_reciever = sw3]
+    [bitrate = 10]
+  dataflow_sw2_a1 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock1]
+    [bitrate = 10]
+  dataflow_sw2_a2 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock2]
+    [bitrate = 10]
+  dataflow_sw2_a3 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock3]
+    [bitrate = 10]
+  dataflow_sw2_a4 : SWToActuatorDataFlow
+    [sw_sender = sw2]
+    [acutator_receiver = doorLock4]
+    [bitrate = 10]
+  dataflow_sw3_sw4 : SWToSWDataFlow
+    [sw_sender = sw3]
+    [sw_reciever = sw4]
+    [bitrate = 160]
+  dataflow_sw3_sw5 : SWToSWDataFlow
+    [sw_sender = sw3]
+    [sw_reciever = sw5]
+    [bitrate = 160]
+  dataflow_sw4_a5 : SWToActuatorDataFlow
+    [sw_sender = sw4]
+    [acutator_receiver = lightUnit1]
+    [bitrate = 100]
+  dataflow_sw4_a6 : SWToActuatorDataFlow
+    [sw_sender = sw4]
+    [acutator_receiver = lightUnit2]
+    [bitrate = 100]
+  dataflow_sw5_a7 : SWToActuatorDataFlow
+    [sw_sender = sw5]
+    [acutator_receiver = lightUnit3]
+    [bitrate = 100]
+  dataflow_sw5_a8 : SWToActuatorDataFlow
+    [sw_sender = sw5]
+    [acutator_receiver = lightUnit4]
+    [bitrate = 100]
+
+  // Resource allocation constraints -- Satisfying equation 7 in Zeller paper
+  sizeOfCodeOnP1 ->> integer = sum p1.deployedFrom.size
+  [sizeOfCodeOnP1 <= p1.capacity]
+
+  sizeOfCodeOnP2 ->> integer = sum p2.deployedFrom.size
+  [sizeOfCodeOnP2 <= p2.capacity]
+
+  sizeOfCodeOnP3 ->> integer = sum p3.deployedFrom.size
+  [sizeOfCodeOnP3 <= p3.capacity]
+
+  sizeOfCodeOnP4 ->> integer = sum p4.deployedFrom.size
+  [sizeOfCodeOnP4 <= p4.capacity]
+
+  // In-vehicle network contraints -- Satifying eq 12 in Zeller paper
+  sumBitRatesOnCan1 ->> integer = sum can1.connectedFrom.bitrate
+  [sumBitRatesOnCan1 <= can1.bandwidth]
+  sumBitRatesOnCan2 ->> integer = sum can2.connectedFrom.bitrate
+  [sumBitRatesOnCan2 <= can2.bandwidth]
+
+  // Topology constraint -- Satisfying equations 13-15 in Zeller paper
+  sumReqGatewayBandwidth ->> integer = sum dataflows.reqGateBandwidth
+  [sumReqGatewayBandwidth <= 250000]
+
+  // Contraints for EDF scheduling
+  // Assuming all deadlines are 10 until we can implement divide on real numbers
+  sumWCETOnP1 ->> integer = sum p1.deployedFrom.wcet
+  [sumWCETOnP1 <= 10]
+  sumWCETOnP2 ->> integer = sum p2.deployedFrom.wcet
+  [sumWCETOnP2 <= 10]
+  sumWCETOnP3 ->> integer = sum p3.deployedFrom.wcet
+  [sumWCETOnP3 <= 10]
+  sumWCETOnP4 ->> integer = sum p4.deployedFrom.wcet
+  [sumWCETOnP4 <= 10]
+
+  // End to end latency for sensor 1 to acutator 8
+  // The path it takes is:
+  //    sensor1 --> s1 --> s2 --> s3 --> s5 --> actuator8
+  TC1_8 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +dataflow_sw5_a8.wctd
+  // The other contraints TCX_Y means from sensorX to acutatorY
+  TC1_7 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +dataflow_sw5_a7.wctd
+  TC1_6 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +dataflow_sw4_a6.wctd
+  TC1_5 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +dataflow_sw4_a5.wctd
+  TC1_4 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a4.wctd
+  TC1_3 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a3.wctd
+  TC1_2 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a2.wctd
+  TC1_1 ->> integer = dataflow_s1_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a1.wctd
+
+  TC2_8 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +dataflow_sw5_a8.wctd
+  TC2_7 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +dataflow_sw5_a7.wctd
+  TC2_6 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +dataflow_sw4_a6.wctd
+  TC2_5 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +dataflow_sw4_a5.wctd
+  TC2_4 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a4.wctd
+  TC2_3 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a3.wctd
+  TC2_2 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a2.wctd
+  TC2_1 ->> integer = dataflow_s2_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a1.wctd
+
+
+  TC3_8 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +dataflow_sw5_a8.wctd
+  TC3_7 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw5.wctd + sw5.wcet + sw5.period +dataflow_sw5_a7.wctd
+  TC3_6 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +dataflow_sw4_a6.wctd
+  TC3_5 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_sw3.wctd + sw3.wcet + sw3.period + dataflow_sw3_sw4.wctd + sw4.wcet + sw4.period +dataflow_sw4_a5.wctd
+  TC3_4 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a4.wctd
+  TC3_3 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a3.wctd
+  TC3_2 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a2.wctd
+  TC3_1 ->> integer = dataflow_s3_sw1.wctd + sw1.period + sw1.wcet + dataflow_sw1_sw2.wctd + sw2.wcet + sw2.period + dataflow_sw2_a1.wctd
+
+// Optimization Goals::
+<< min KeylessEntrySystem.TC1_8 >>
+<< min KeylessEntrySystem.TC1_7 >>
+<< min KeylessEntrySystem.TC1_6 >>
+<< min KeylessEntrySystem.TC1_5 >>
+<< min KeylessEntrySystem.TC1_4 >>
+<< min KeylessEntrySystem.TC1_3 >>
+<< min KeylessEntrySystem.TC1_2 >>
+<< min KeylessEntrySystem.TC1_1 >>
+<< min KeylessEntrySystem.TC2_8 >>
+<< min KeylessEntrySystem.TC2_7 >>
+<< min KeylessEntrySystem.TC2_6 >>
+<< min KeylessEntrySystem.TC2_5 >>
+<< min KeylessEntrySystem.TC2_4 >>
+<< min KeylessEntrySystem.TC2_3 >>
+<< min KeylessEntrySystem.TC2_2 >>
+<< min KeylessEntrySystem.TC2_1 >>
+<< min KeylessEntrySystem.TC3_8 >>
+<< min KeylessEntrySystem.TC3_7 >>
+<< min KeylessEntrySystem.TC3_6 >>
+<< min KeylessEntrySystem.TC3_5 >>
+<< min KeylessEntrySystem.TC3_4 >>
+<< min KeylessEntrySystem.TC3_3 >>
+<< min KeylessEntrySystem.TC3_2 >>
+<< min KeylessEntrySystem.TC3_1 >>
