@@ -423,33 +423,33 @@
 
 // Start test code 9 -- Allocation sets and single WCTD
 
-// abstract ECU
-//   deployedFrom -> Function *
-//     [this.deployedTo = parent] // C1
-// abstract Function
-//   wctd ->> integer
-//   deployedTo -> ECU
-//     [parent in this.deployedFrom]// C2
+abstract ECU
+  deployedFrom -> Function *
+    [this.deployedTo = parent] // C1
+abstract Function
+  wctd ->> integer
+  deployedTo -> ECU
+    [parent in this.deployedFrom]// C2
 
-// p1 : ECU
-// p2 : ECU
-// p3 : ECU
-// p4 : ECU
-// sw1 : Function
-//   [deployedTo = p1]
-// sw2 : Function
-//   [(deployedTo = p2) || (deployedTo = p3)]
-//   [wctd = 10]
-// sw3 : Function
-//   [wctd = 10]
-// sw4 : Function
-//   [wctd = 10]
-// sw5 : Function
-//   [wctd = 10]
+p1 : ECU
+p2 : ECU
+p3 : ECU
+p4 : ECU
+sw1 : Function
+  [deployedTo = p1]
+sw2 : Function
+  [(deployedTo = p2) || (deployedTo = p3)]
+  [wctd = 10]
+sw3 : Function
+  [wctd = 10]
+sw4 : Function
+  [wctd = 10]
+sw5 : Function
+  [wctd = 10]
 
-// // This constraint says: If the SW1 and SW3 are deployed on the same ECU then set the
-// // WCTD of sw1 to 0. Otherwise set it to 100.
-// [sw1.wctd = if (sw1.deployedTo.ref != sw3.deployedTo.ref) then 100 else 0]
+// This constraint says: If the SW1 and SW3 are deployed on the same ECU then set the
+// WCTD of sw1 to 0. Otherwise set it to 100.
+[sw1.wctd = if (sw1.deployedTo.ref != sw3.deployedTo.ref) then 100 else 0]
 
 // End test code 9
 
@@ -522,134 +522,134 @@
 
 // // End test code 10
 
-// Start test code 7 -- Allocation sets, Resource contraints, in-vehicle networks
-abstract NetworkedDevice
-  bitrate ->> integer
-  connectedTo -> CANBus // The bus which the device is physically linked to.
-    [parent in this.connectedFrom]
+// // Start test code 7 -- Allocation sets, Resource contraints, in-vehicle networks
+// abstract NetworkedDevice
+//   bitrate ->> integer
+//   connectedTo -> CANBus // The bus which the device is physically linked to.
+//     [parent in this.connectedFrom]
 
-abstract Sensor : NetworkedDevice
-  bandwidth ->> integer
+// abstract Sensor : NetworkedDevice
+//   bandwidth ->> integer
  
-abstract Actuator : NetworkedDevice
-  bandwidth ->> integer
+// abstract Actuator : NetworkedDevice
+//   bandwidth ->> integer
 
-abstract CANBus
-  bandwidth ->> integer
-  connectedFrom -> NetworkedDevice * // The networked devices connected to bus
-    [this.connectedTo = parent]
-
-
-abstract ECU : NetworkedDevice
-  capacity ->> integer
-  deployedFrom -> Function *
-    [this.deployedTo = parent] // C1
-abstract Function
-  size ->> integer
-  bitrate->> integer
-  deployedTo -> ECU
-    [parent in this.deployedFrom]// C2
-  connectedTo -> CANBus
-    [connectedTo.ref = deployedTo.connectedTo.ref]
-
-// Set of ECU's
-p1 : ECU
-  [capacity = 1]
-  [bitrate = sum deployedFrom.bitrate]
-  [connectedTo = can1]
-p2 : ECU
-  [capacity = 2]
-  [bitrate = sum deployedFrom.bitrate]
-  [connectedTo = can1]
-p3 : ECU
-  [capacity = 3]
-  [bitrate = sum deployedFrom.bitrate]
-  [connectedTo = can2]
-p4 : ECU
-  [capacity = 1]
-  [bitrate = sum deployedFrom.bitrate]
-  [connectedTo = can2]
-
-// Set of software functions
-sw1 : Function
-  [size = 1]
-  [bitrate = 8]
-  [deployedTo = p1]
-sw2 : Function
-  [size = 1]
-  [bitrate = 1]
-  [(deployedTo = p2) || (deployedTo = p3)]
-sw3 : Function
-  [size = 1]
-  [bitrate = 32]
-sw4 : Function
-  [size = 1]
-  [bitrate = 20]
-sw5 : Function
-  [size = 1]
-  [bitrate = 20]
-
-// Set of CAN busses
-can1 : CANBus
-  [bandwidth = 125]
-can2 : CANBus
-  [bandwidth = 125]
+// abstract CANBus
+//   bandwidth ->> integer
+//   connectedFrom -> NetworkedDevice * // The networked devices connected to bus
+//     [this.connectedTo = parent]
 
 
-// Set of Sensors
-antenna1 : NetworkedDevice
-  [bitrate = 8]
-  [connectedTo = can2]
+// abstract ECU : NetworkedDevice
+//   capacity ->> integer
+//   deployedFrom -> Function *
+//     [this.deployedTo = parent] // C1
+// abstract Function
+//   size ->> integer
+//   bitrate->> integer
+//   deployedTo -> ECU
+//     [parent in this.deployedFrom]// C2
+//   connectedTo -> CANBus
+//     [connectedTo.ref = deployedTo.connectedTo.ref]
 
-antenna2 : NetworkedDevice
-  [bitrate = 8]
-  [connectedTo = can2]
+// // Set of ECU's
+// p1 : ECU
+//   [capacity = 1]
+//   [bitrate = sum deployedFrom.bitrate]
+//   [connectedTo = can1]
+// p2 : ECU
+//   [capacity = 2]
+//   [bitrate = sum deployedFrom.bitrate]
+//   [connectedTo = can1]
+// p3 : ECU
+//   [capacity = 3]
+//   [bitrate = sum deployedFrom.bitrate]
+//   [connectedTo = can2]
+// p4 : ECU
+//   [capacity = 1]
+//   [bitrate = sum deployedFrom.bitrate]
+//   [connectedTo = can2]
 
-antenna3 : NetworkedDevice
-  [bitrate = 8]
-  [connectedTo = can2]
+// // Set of software functions
+// sw1 : Function
+//   [size = 1]
+//   [bitrate = 8]
+//   [deployedTo = p1]
+// sw2 : Function
+//   [size = 1]
+//   [bitrate = 1]
+//   [(deployedTo = p2) || (deployedTo = p3)]
+// sw3 : Function
+//   [size = 1]
+//   [bitrate = 32]
+// sw4 : Function
+//   [size = 1]
+//   [bitrate = 20]
+// sw5 : Function
+//   [size = 1]
+//   [bitrate = 20]
 
-// Set of actuators
-doorLock1 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can2]
-doorLock2 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can2]
-doorLock3 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can2]
-doorLock4 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can2]
-lightUnit1 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can1]
-lightUnit2 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can1]
-lightUnit3 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can1]
-lightUnit4 : NetworkedDevice
-  [bitrate = 1]
-  [connectedTo = can1]
+// // Set of CAN busses
+// can1 : CANBus
+//   [bandwidth = 125]
+// can2 : CANBus
+//   [bandwidth = 125]
 
-sizeOfCodeOnP1 ->> integer = sum p1.deployedFrom.size
-[sizeOfCodeOnP1 <= p1.capacity]
 
-sizeOfCodeOnP2 ->> integer = sum p2.deployedFrom.size
-[sizeOfCodeOnP2 <= p2.capacity]
+// // Set of Sensors
+// antenna1 : NetworkedDevice
+//   [bitrate = 8]
+//   [connectedTo = can2]
 
-sizeOfCodeOnP3 ->> integer = sum p3.deployedFrom.size
-[sizeOfCodeOnP3 <= p3.capacity]
+// antenna2 : NetworkedDevice
+//   [bitrate = 8]
+//   [connectedTo = can2]
 
-sizeOfCodeOnP4 ->> integer = sum p4.deployedFrom.size
-[sizeOfCodeOnP4 <= p4.capacity]
+// antenna3 : NetworkedDevice
+//   [bitrate = 8]
+//   [connectedTo = can2]
 
-sumBitRatesOnCan1 ->> integer = sum can1.connectedFrom.bitrate
-[sumBitRatesOnCan1 <= can1.bandwidth]
-sumBitRatesOnCan2 ->> integer = sum can2.connectedFrom.bitrate
-[sumBitRatesOnCan2 <= can2.bandwidth]
+// // Set of actuators
+// doorLock1 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can2]
+// doorLock2 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can2]
+// doorLock3 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can2]
+// doorLock4 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can2]
+// lightUnit1 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can1]
+// lightUnit2 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can1]
+// lightUnit3 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can1]
+// lightUnit4 : NetworkedDevice
+//   [bitrate = 1]
+//   [connectedTo = can1]
 
-// End test code 7
+// sizeOfCodeOnP1 ->> integer = sum p1.deployedFrom.size
+// [sizeOfCodeOnP1 <= p1.capacity]
+
+// sizeOfCodeOnP2 ->> integer = sum p2.deployedFrom.size
+// [sizeOfCodeOnP2 <= p2.capacity]
+
+// sizeOfCodeOnP3 ->> integer = sum p3.deployedFrom.size
+// [sizeOfCodeOnP3 <= p3.capacity]
+
+// sizeOfCodeOnP4 ->> integer = sum p4.deployedFrom.size
+// [sizeOfCodeOnP4 <= p4.capacity]
+
+// sumBitRatesOnCan1 ->> integer = sum can1.connectedFrom.bitrate
+// [sumBitRatesOnCan1 <= can1.bandwidth]
+// sumBitRatesOnCan2 ->> integer = sum can2.connectedFrom.bitrate
+// [sumBitRatesOnCan2 <= can2.bandwidth]
+
+// // End test code 7

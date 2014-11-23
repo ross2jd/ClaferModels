@@ -51,22 +51,22 @@ abstract Function
 abstract SWToSWDataFlow
   sw_sender -> Function // Denotes the function that is transmitting the message
   sw_reciever -> Function // Denotes the function that is receiving the message
-  wctd ->> integer
+  // wctd ->> integer
   // This constraint says: If the sender and reciever are deployed on the same ECU then set the
   // WCTD of the dataflow to 0. Otherwise set it to 100.
-  [wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
+  // [wctd = if (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref) then 100 else 0]
   // // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
-  // num_data_bytes ->> integer // The number of bytes that needs to be sent
+  num_data_bytes ->> integer // The number of bytes that needs to be sent
   bitrate ->> integer // The transmission rate of bits per second
-  // xor identifier
-  //   bit_id_11// (55+10*num_data_bytes)/bitrate
-  //   bit_id_29// (80+10*num_data_bytes)/bitrate
-  // wctd ->> integer
-  // [wctd = if ((bit_id_11) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
-  //   then ((55+10*num_data_bytes)/bitrate) 
-  //   else (if ((bit_id_29) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
-  //     then ((80+10*num_data_bytes)/bitrate)
-  //     else 0)]
+  xor identifier
+    bit_id_11// (55+10*num_data_bytes)/bitrate
+    bit_id_29// (80+10*num_data_bytes)/bitrate
+  wctd ->> integer
+  [wctd = if ((bit_id_11) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
+    then ((55+10*num_data_bytes)/bitrate) 
+    else (if ((bit_id_29) && (sw_sender.deployedTo.ref != sw_reciever.deployedTo.ref))
+      then ((80+10*num_data_bytes)/bitrate)
+      else 0)]
   reqGateBandwidth ->> integer
   // We only need gateway bandwidth if our two sofware functions are not connected to the same bus.
   [reqGateBandwidth = if (sw_sender.connectedTo.ref != sw_reciever.connectedTo.ref) then bitrate else 0]
@@ -75,20 +75,20 @@ abstract SWToSWDataFlow
 abstract SensorToSWDataFlow
   sensor_sender -> NetworkedDevice // Denotes the sensor that is transmitting the message
   sw_reciever -> Function // Denotes the function that is receiving the message
-  wctd ->> integer
-  [wctd = 100]
-  // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
-  // num_data_bytes ->> integer // The number of bytes that needs to be sent
-  bitrate ->> integer // The transmission rate of bits per second
-  // xor identifier
-  //   bit_id_11// (55+10*num_data_bytes)/bitrate
-  //   bit_id_29// (80+10*num_data_bytes)/bitrate
   // wctd ->> integer
-  //   [wctd = if (bit_id_11)
-  //     then ((55+10*num_data_bytes)/bitrate) 
-  //     else (if (bit_id_29)
-  //       then ((80+10*num_data_bytes)/bitrate)
-  //       else 0)]
+  // [wctd = 100]
+  // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
+  num_data_bytes ->> integer // The number of bytes that needs to be sent
+  bitrate ->> integer // The transmission rate of bits per second
+  xor identifier
+    bit_id_11// (55+10*num_data_bytes)/bitrate
+    bit_id_29// (80+10*num_data_bytes)/bitrate
+  wctd ->> integer
+    [wctd = if (bit_id_11)
+      then ((55+10*num_data_bytes)/bitrate) 
+      else (if (bit_id_29)
+        then ((80+10*num_data_bytes)/bitrate)
+        else 0)]
   reqGateBandwidth ->> integer
   // We only need gateway bandwidth if our sensor and software function are not connected to the same bus.
   [reqGateBandwidth = if (sensor_sender.connectedTo.ref != sw_reciever.connectedTo.ref) then bitrate else 0]
@@ -97,20 +97,20 @@ abstract SensorToSWDataFlow
 abstract SWToActuatorDataFlow
   sw_sender -> Function // Denotes the function that is transmitting the message
   acutator_receiver -> NetworkedDevice // Denotes the actutator that is receiving the message
-  wctd ->> integer
-  [wctd = 100]
-  // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
-  // num_data_bytes ->> integer // The number of bytes that needs to be sent
-  bitrate ->> integer // The transmission rate of bits per second
-  // xor identifier
-  //   bit_id_11// (55+10*num_data_bytes)/bitrate
-  //   bit_id_29// (80+10*num_data_bytes)/bitrate
   // wctd ->> integer
-  //   [wctd = if (bit_id_11)
-  //     then ((55+10*num_data_bytes)/bitrate) 
-  //     else (if (bit_id_29)
-  //       then ((80+10*num_data_bytes)/bitrate)
-  //       else 0)]
+  // [wctd = 100]
+  // // Formulas from CAN schedulability analysis paper -- Clafer borke -- Not enough heap space
+  num_data_bytes ->> integer // The number of bytes that needs to be sent
+  bitrate ->> integer // The transmission rate of bits per second
+  xor identifier
+    bit_id_11// (55+10*num_data_bytes)/bitrate
+    bit_id_29// (80+10*num_data_bytes)/bitrate
+  wctd ->> integer
+    [wctd = if (bit_id_11)
+      then ((55+10*num_data_bytes)/bitrate) 
+      else (if (bit_id_29)
+        then ((80+10*num_data_bytes)/bitrate)
+        else 0)]
   reqGateBandwidth ->> integer
   // We only need gateway bandwidth if our actuator and software function are not connected to the same bus.
   [reqGateBandwidth = if (sw_sender.connectedTo.ref != acutator_receiver.connectedTo.ref) then bitrate else 0]
@@ -137,86 +137,86 @@ p4 : ECU
 
 // Set of software functions
 sw1 : Function
-  dataflow_sw1_sw2 : SWToSWDataFlow
-    [sw_sender = sw1]
-    [sw_reciever = sw2]
-    [bitrate = 80]
   // dataflow_sw1_sw2 : SWToSWDataFlow
   //   [sw_sender = sw1]
   //   [sw_reciever = sw2]
-  //   [num_data_bytes = 100]
-  //   [bitrate = 10]
-  //   [bit_id_29]
+  //   [bitrate = 80]
+  dataflow_sw1_sw2 : SWToSWDataFlow
+    [sw_sender = sw1]
+    [sw_reciever = sw2]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_29]
   [size = 64]
   [bitrate = 80]
   [deployedTo = p1]
   [deadline = 25]
   [period = 25]
 sw2 : Function
-  dataflow_sw2_sw3 : SWToSWDataFlow
-    [sw_sender = sw2]
-    [sw_reciever = sw3]
-    [bitrate = 10]
   // dataflow_sw2_sw3 : SWToSWDataFlow
   //   [sw_sender = sw2]
   //   [sw_reciever = sw3]
-  //   [num_data_bytes = 100]
   //   [bitrate = 10]
-  //   [bit_id_11]
+  dataflow_sw2_sw3 : SWToSWDataFlow
+    [sw_sender = sw2]
+    [sw_reciever = sw3]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_11]
   dataflow_sw2_a1 : SWToActuatorDataFlow
     [sw_sender = sw2]
     [acutator_receiver = doorLock1]
     [bitrate = 10]
-    // [num_data_bytes = 100]
-    // [bitrate = 10]
-    // [bit_id_11]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_11]
   dataflow_sw2_a2 : SWToActuatorDataFlow
     [sw_sender = sw2]
     [acutator_receiver = doorLock2]
     [bitrate = 10]
-    // [num_data_bytes = 100]
-    // [bitrate = 10]
-    // [bit_id_11]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_11]
   dataflow_sw2_a3 : SWToActuatorDataFlow
     [sw_sender = sw2]
     [acutator_receiver = doorLock3]
     [bitrate = 10]
-    // [num_data_bytes = 100]
-    // [bitrate = 10]
-    // [bit_id_11]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_11]
   dataflow_sw2_a4 : SWToActuatorDataFlow
     [sw_sender = sw2]
     [acutator_receiver = doorLock4]
     [bitrate = 10]
-    // [num_data_bytes = 100]
-    // [bitrate = 10]
-    // [bit_id_11]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_11]
   [size = 128]
   [bitrate = 50] // We add all the bit rates out of s2 in Figure 2.
   [(deployedTo = p2) || (deployedTo = p3)]
   [deadline = 10]
   [period = 10]
 sw3 : Function
-  dataflow_sw3_sw4 : SWToSWDataFlow
-    [sw_sender = sw3]
-    [sw_reciever = sw4]
-    [bitrate = 160]
-  dataflow_sw3_sw5 : SWToSWDataFlow
-    [sw_sender = sw3]
-    [sw_reciever = sw5]
-    [bitrate = 160]
   // dataflow_sw3_sw4 : SWToSWDataFlow
   //   [sw_sender = sw3]
   //   [sw_reciever = sw4]
-  //   [num_data_bytes = 100]
-  //   [bitrate = 10]
-  //   [bit_id_29]
+  //   [bitrate = 160]
   // dataflow_sw3_sw5 : SWToSWDataFlow
   //   [sw_sender = sw3]
   //   [sw_reciever = sw5]
-  //   [num_data_bytes = 100]
-  //   [bitrate = 10]
-  //   [bit_id_29]
+  //   [bitrate = 160]
+  dataflow_sw3_sw4 : SWToSWDataFlow
+    [sw_sender = sw3]
+    [sw_reciever = sw4]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_29]
+  dataflow_sw3_sw5 : SWToSWDataFlow
+    [sw_sender = sw3]
+    [sw_reciever = sw5]
+    [num_data_bytes = 100]
+    [bitrate = 10]
+    [bit_id_29]
   [size = 64]
   [bitrate = 320] // We add all the bit rates out of s3 in Figure 2.
   [deadline = 25]
@@ -225,15 +225,15 @@ sw4 : Function
   dataflow_sw4_a5 : SWToActuatorDataFlow
     [sw_sender = sw4]
     [acutator_receiver = lightUnit1]
-    // [num_data_bytes = 100]
+    [num_data_bytes = 100]
     [bitrate = 100]
-    // [bit_id_11]
+    [bit_id_11]
   dataflow_sw4_a6 : SWToActuatorDataFlow
     [sw_sender = sw4]
     [acutator_receiver = lightUnit2]
-    // [num_data_bytes = 100]
+    [num_data_bytes = 100]
     [bitrate = 100]
-    // [bit_id_11]
+    [bit_id_11]
   [size = 32]
   [bitrate = 200] // We add all the bit rates out of s4 in Figure 2.
   [deadline = 10]
@@ -242,15 +242,15 @@ sw5 : Function
   dataflow_sw5_a7 : SWToActuatorDataFlow
     [sw_sender = sw5]
     [acutator_receiver = lightUnit3]
-    // [num_data_bytes = 100]
+    [num_data_bytes = 100]
     [bitrate = 100]
-    // [bit_id_11]
+    [bit_id_11]
   dataflow_sw5_a8 : SWToActuatorDataFlow
     [sw_sender = sw5]
     [acutator_receiver = lightUnit4]
-    // [num_data_bytes = 100]
+    [num_data_bytes = 100]
     [bitrate = 100]
-    // [bit_id_11]
+    [bit_id_11]
   [size = 32]
   [bitrate = 200] // We add all the bit rates out of s5 in Figure 2.
   [deadline = 10]
@@ -269,6 +269,8 @@ antenna1 : NetworkedDevice
     [sensor_sender = antenna1]
     [sw_reciever = sw1]
     [bitrate = 80]
+    [num_data_bytes = 0]
+    [bit_id_11]
   [bitrate = 80]
   [connectedTo = can2]
 antenna2 : NetworkedDevice
@@ -276,6 +278,8 @@ antenna2 : NetworkedDevice
     [sensor_sender = antenna2]
     [sw_reciever = sw1]
     [bitrate = 80]
+    [num_data_bytes = 0]
+    [bit_id_11]
   [bitrate = 80]
   [connectedTo = can2]
 antenna3 : NetworkedDevice
@@ -283,6 +287,8 @@ antenna3 : NetworkedDevice
     [sensor_sender = antenna3]
     [sw_reciever = sw1]
     [bitrate = 80]
+    [num_data_bytes = 0]
+    [bit_id_11]
   [bitrate = 80]
   [connectedTo = can2]
 
