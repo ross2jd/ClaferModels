@@ -7,12 +7,29 @@
 // Jordan A. Ross
 // 
 // The Clafer implementation follows the model given in the paper closely except for the following exceptions:
-// 1. EDF Scheduling is used - only periods of 10 are allowed for a task.
-// 2. There is no real number system so everything is scaled to integers.
-// 3. WCTD is not modeled accurately.
+// 1. There is no real number system so everything is scaled to integers.
+// 2. WCTD is not modeled accurately.
 //
 // Date created: 14/10/2014
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// This clafer holds the scaling factor that is used to accomodate for the limitaion on not having
+// real numbers for EDF scheduling. How this works is that each SW function is going to have a 
+// calculated utilization factor which is defined as WCET/deadline. Now, deadline is always (or should)
+// be bigger than WCET so we will end up with a utilization less than 0 which is evaluated to
+// 0 or 1 in clafer (integer division). Thus what we do with the scaling factor is we mutliply
+// the WCET by the greatest common multiple of the deadline over all software fuctions. This will
+// then give us an precise integer that we can use as our utilization. We then need to account
+// for this multiplication in the EDF equation by multiplying the right hand side by the same
+// factor. While this can be used in a large number of situtations it will most definetly not work
+// if there does not exist a greatest common multiple or that the deadlines are floating point
+// numbers themselves. The former case what would happen is a loss of percision in the models
+// computation. The latter can not be handled at all since there is not support for real numbers.
+// TODO: We should test that we can select a greatest common multiple such that the multiplication
+// of the WCET*scalingFactor exceeds the maximum integer.
+// Example: Assume our deadlines are (10, 2, 100, 50, 25)
+// We would then choose a scaling factor of 100 or 200.
+utilScalingFactor ->> integer = 100
 
 // ---------------------- Meta-Model (Abstract Clafer) ---------------------------------------- //
 abstract NetworkedDevice
@@ -29,6 +46,8 @@ abstract CANBus
 abstract ECU : NetworkedDevice
   capacity ->> integer  // The size of the memory of the ECU
   [bitrate = sum deployedFrom.bitrate]
+  utilization ->> integer // The total utilization of the ECU
+    [utilization = sum deployedFrom.utilization]
   deployedFrom -> Function *  // Which functions are running on the ECU
     [this.deployedTo = parent] // C1
 
@@ -36,11 +55,14 @@ abstract Function
   size ->> integer   // The worst case amount of memory that the function could use.
   bitrate->> integer // The bitrate at which the function sends messages over the bus
   wcet ->> integer   // The worst case exectuion time of the function. Caution here because this is associated with the ECU it is assigned
-    [wcet > 0]       // We want to only constrain the worst case execution time by being non-neg
+    [wcet = 1]
+    //[wcet > 0 && wcet < deadline]       // We want to only constrain the worst case execution time by being non-negative and it should never be worse than our deadline 
   deadline ->> integer // The deadline of the software function
     [deadline > 0]
   period ->> integer // The period of the software function
     [period > 0]
+  utilization ->> integer // This holds the scheduablity utilization (i.e. wcet/deadline)
+    [utilization = (wcet*utilScalingFactor)/deadline]
   deployedTo -> ECU  // What ECU the function is deployed to.
     [parent in this.deployedFrom]// C2
   connectedTo -> CANBus
@@ -132,7 +154,7 @@ KeylessEntrySystem
   sw2 : Function
     [size = 128]
     [bitrate = 50] // We add all the bit rates out of s2 in Figure 2.
-    [deployedTo in (p2, p3)]
+    [deployedTo in (p3)]
     [deadline = 100]
     [period = 100]
   sw3 : Function
@@ -140,33 +162,36 @@ KeylessEntrySystem
     [bitrate = 320] // We add all the bit rates out of s3 in Figure 2.
     [deadline = 25]
     [period = 25]
+    [deployedTo in (p3)]
   sw4 : Function
     [size = 32]
     [bitrate = 200] // We add all the bit rates out of s4 in Figure 2.
     [deadline = 10]
     [period = 10]
+    [deployedTo in (p3)]
   sw5 : Function
     [size = 32]
     [bitrate = 200] // We add all the bit rates out of s5 in Figure 2.
     [deadline = 10]
     [period = 10]
+    [deployedTo in (p3)]
 
   // ECUs
   p1 : ECU
     [capacity = 128]
-    [connectedTo = can1]
+    [connectedTo in (can1)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   p2 : ECU
     [capacity = 128]
-    [connectedTo = can1]
+    [connectedTo in (can1)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   p3 : ECU
     [capacity = 256]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   p4 : ECU
     [capacity = 128]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
 
   // Busses
@@ -178,49 +203,49 @@ KeylessEntrySystem
   // Sensors
   antenna1 : NetworkedDevice
     [bitrate = 80]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   antenna2 : NetworkedDevice
     [bitrate = 80]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   antenna3 : NetworkedDevice
     [bitrate = 80]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
 
   // Actuators
   doorLock1 : NetworkedDevice
     [bitrate = 0] // We don't have any bit rate for the acutator because it is not sending any messages
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   doorLock2 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   doorLock3 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    //[connectedTo = can2]
     //[(connectedTo = can1) || (connectedTo = can2)]
   doorLock4 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    [connectedTo in (can2)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   lightUnit1 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    [connectedTo in (can1)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   lightUnit2 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    [connectedTo in (can1)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   lightUnit3 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    [connectedTo in (can1)]
     //[(connectedTo = can1) || (connectedTo = can2)]
   lightUnit4 : NetworkedDevice
     [bitrate = 0]
-    [connectedTo = can2]
+    [connectedTo in (can1)]
     //[(connectedTo = can1) || (connectedTo = can2)]
 
   // Dataflows
@@ -325,16 +350,9 @@ KeylessEntrySystem
   [sum dataflows.reqGateBandwidth <= 250000]
 
   // Contraints for EDF scheduling
-  // Assuming all deadlines are 10 until we can implement divide on real numbers
-  [all p : ECU | sum p.deployedFrom.wcet <= 10]
-  /*sumWCETOnP1 ->> integer = sum p1.deployedFrom.wcet
-  [sumWCETOnP1 <= 10]
-  sumWCETOnP2 ->> integer = sum p2.deployedFrom.wcet
-  [sumWCETOnP2 <= 10]
-  sumWCETOnP3 ->> integer = sum p3.deployedFrom.wcet
-  [sumWCETOnP3 <= 10]
-  sumWCETOnP4 ->> integer = sum p4.deployedFrom.wcet
-  [sumWCETOnP4 <= 10]*/
+  // Each ECU has a utilization factor that is equal to the sum over all the deployed software
+  // functions taking the software functions WCET*utilScalingFactor/deadline
+  [all p : ECU | p.utilization <= utilScalingFactor]
 
   // End to end latency for sensor 1 to acutator 8
   // The path it takes is:
