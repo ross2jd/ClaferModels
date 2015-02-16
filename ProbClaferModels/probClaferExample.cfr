@@ -1,0 +1,161 @@
+// probClaferExample.cfr
+// Author: Jordan A. Ross
+// Date: 1/26/2015
+//
+// This is just an example for prototypying a Clafer model for reliability analysis. We
+// consider the following example taken from Figure 4.14 in "Reliability Engineering and Risk
+// Analysis" by Mohammad Modarres, Mark Kaminskiy, Vasiliy Krivtsov
+// 
+// Structural model::
+//                    ---
+//            |----->| A |------->|
+//   ---      |       ---         |        ---
+//  | X | ----|       ---         |------>| Y |
+//   ---      |----->| B |------->|        ---
+//            |       ---         |
+//            |    ---     ---    |
+//            |-->| C |-->| D |-->|
+//                 ---     ---
+//
+// Assume that blocks A, B, C, and D all have a basic event "InternalFailure" but we denote it
+// as the block letter in the fault tree (i.e. "InternalFailure of A" will just be "A"). In this
+// example we are interested in seeing if we send data from X (not including in the reliablilty
+// analysis) what is the probability that the data will be read at Y (also not included in the
+// analysis). Thus, we are really just interested in the probability that the subsystem made up
+// of components A, B, C, and D fails.
+// 
+// Let us denote the top event as T which is the event that our subsystem (A, B, C, D) fails.
+//
+// The fault tree then would look as follows:
+//                   ---
+//                  | T |
+//                   ---
+//                    ^
+//                    |
+//                  (AND)
+//                    ^
+//        |------|----|----------|
+//       ---    ---             (OR)
+//      | A |  | B |             |
+//       ---    ---        |------------|
+//                        ---          ---
+//                       | C |        | D |
+//                        ---          ---
+//
+// Now, let us assume that the basic events of A, B, C, D have the following probabilities:
+// P(A) = 0.1
+// P(B) = 0.1
+// P(C) = 0.1
+// P(D) = 0.2
+//
+// We can find the probability of C or D failing using the formula for the OR Gate.
+// Note that the probability at the OR gate is given by the following formula if x,y,z are
+// independent but not mutually exclusive events (Eq 2.15):
+// P_OR(x,y,z) = P(x) + P(y) + P(z) - P(x,y,z)
+// Thus,
+// P_OR(C,D) = P(C)+P(D)-P(C)*P(D) = 0.28
+// 
+// We can find the probability of T then by using the previous result in our AND Gate.
+// Note that the probability at the AND gate is given by the following formula if x,y,z are
+// independent events (Eq 2.13):
+// P_AND(x,y,z) = P(x)*P(y)*P(z)
+// Thus,
+// P(T) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028
+//
+
+// I am first defining some abstract Clafers that will represent structural elements in my model
+// and possibly other models. To represent the block diagram given above we need a general
+// component Clafer that can connect any number of inputs and outputs. We also give some special
+// types of components in which there is only outputs or only inputs.
+abstract Component
+    inputs -> Component *
+        [parent in this.outputs] // We use this constaint to say that when we put a component
+                                 // in our input list, also put us in that components output list. 
+    outputs -> Component *
+        [parent in this.inputs] // We use this constaint to say that when we put a component
+                                // in our output list, also put us in that components input list.
+
+abstract OutputComponent : Component
+    [no inputs]
+
+abstract InputComponent : Component
+    [no outputs]
+
+// Next I define some abstract Clafers to represent some of the probability measures we will
+// need in our model. The basic event is a probability and for now we just say a probability
+// is an integer. This probability abstract Clafer can change as we add distributions as well
+// as other properties. The failure expression Clafer is just a probability with no useful
+// properties. With some extensions to the language it might be possible to add some constraints
+// to this Clafer to calculate the value of an expression.
+abstract BasicEvent : Probability
+
+abstract FailureExpression : Probability
+
+abstract Probability -> integer
+
+// Next the system level Clafer is defined (i.e. the Clafer that contains the entire structural
+// model). We will call this system "SimpleSystem"
+SimpleSystem
+    // In this simple system we have a total of 6 component. We first define the components that
+    // we will have then we will provide details for the components after
+    systemComponents -> Component 6
+    [systemComponents = compX, compA, compB, compC, compD, compY]
+
+    // Now for each of the components in our simple system we will define the properties for
+    // each of the individual components. For each component we will define the connections it
+    // makes. Think of the connections as 
+    compX : OutputComponent
+        [outputs = (compA, compB, compC)]
+    // For components A, B, C, and D we will not just have structural information but also
+    // basic events and failure probabilities.
+    compA : Component
+        // We first define our outputs of the component but don't worry about inputs since our
+        // constraint in the Component Clafer will take care of that.
+        [outputs = (compY)]
+        // Next we define a basic event that might cause this component to fail and assign it
+        // a probability value of 1. Now, this value of 1 does not actually mean 1 in the
+        // probability since but rather 1/10->0.1 because we have a scale factor of 10. We need
+        // this scale factor in order to calculate a meaningful value of probability using only
+        // integers.
+        internalFailure : BasicEvent = 1
+        // We then define our failure expression. This is similiar to the HiPHOPs approach. For
+        // this component the probability that this component fails is equal to the single basic
+        // event.
+        failure : FailureExpression = internalFailure
+        // Lastly we define our scale factor. This is based one 2 things: 1) the probability of
+        // of the basic events 2) the expression given for "failure". Since in this case we have
+        // a simple failure expression the scale factor is equivelant to the scale of the basic
+        // event probability (you can also think of it as the denominator of the probability value)
+        failureScaleFactor : integer = 10
+    compB : Component
+        [outputs = (compY)]
+        internalFailure : BasicEvent = 1
+        failure : FailureExpression = internalFailure
+        failureScaleFactor : integer = 10
+    compC : Component
+        [outputs = (compD)]
+        internalFailure : BasicEvent = 1
+        failure : FailureExpression = internalFailure
+        failureScaleFactor : integer = 10
+    compD : Component
+        [outputs = (compY)]
+        internalFailure : BasicEvent = 2
+        // For component D we have to give a somewhat ugly failure expression because we don't
+        // have a clean way of giving the boolean expression. Therefore we are giving the formula
+        // that the boolean formula equates to. Note here that we are multiplying the internalFailure
+        // and component C failure by 10. This is due to the math needed to scale the integers
+        // to give a meaningful result.
+        failure : FailureExpression = (internalFailure*10)+(compC.failure*10)-(internalFailure*compC.failure)
+        // Here our scale factor is our probability denominator multiplied by component C scale
+        // factor because we are adding/subtracting fractions with different denominators so
+        // this is the greatest common denominator.
+        failureScaleFactor : integer = 10*compC.failureScaleFactor
+    compY : InputComponent
+        failure : FailureExpression = (compA.failure)*(compD.failure)*(compB.failure)
+        failureScaleFactor ->> integer = compD.failureScaleFactor*compA.failureScaleFactor*compB.failureScaleFactor
+
+
+factor : integer = 10
+
+// Limitations/Errors found:
+// (compC.failure)*factor --> Error in Choco (Also get the error w/o parenthesis)

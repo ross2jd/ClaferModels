@@ -1,0 +1,374 @@
+// probClaferExample4.cfr
+// Author: Jordan A. Ross
+// Date: 1/26/2015
+// Last updated: 2/10/2015 
+//
+// This version of the example is one that currently won't compile. We are using this model
+// to show how we eventually want to be able to model this example in Clafer.
+//
+// This is just an example for prototypying a Clafer model for reliability analysis. We
+// consider the following example taken from Figure 4.14 in "Reliability Engineering and Risk
+// Analysis" by Mohammad Modarres, Mark Kaminskiy, Vasiliy Krivtsov
+// 
+// Structural model::
+//                    ---
+//            |----->| A |------->|
+//   ---      |       ---         |        ---
+//  | X | ----|       ---         |------>| Y |
+//   ---      |----->| B |------->|        ---
+//            |       ---         |
+//            |    ---     ---    |
+//            |-->| C |-->| D |-->|
+//                 ---     ---
+//
+// Assume that blocks A, B, C, and D all have a basic event "InternalFailure" but we denote it
+// as the block letter in the fault tree (i.e. "InternalFailure of A" will just be "A"). In this
+// example we are interested in seeing if we send data from X (not including in the reliablilty
+// analysis) what is the probability that the data will be read at Y (also not included in the
+// analysis). Thus, we are really just interested in the probability that the subsystem made up
+// of components A, B, C, and D fails.
+// 
+// Let us denote the top event as Y which is the event that our subsystem (A, B, C, D) fails.
+//
+// The fault tree then would look as follows:
+//                   ---
+//                  | Y |
+//                   ---
+//                    ^
+//                    |
+//                  (AND)
+//                    ^
+//        |------|----|----------|
+//       ---    ---             (OR)
+//      | A |  | B |             |
+//       ---    ---        |------------|
+//                        ---          ---
+//                       | C |        | D |
+//                        ---          ---
+//
+// Now, let us assume that the basic events of A, B, C, D have the following probabilities:
+// P(A) = 0.1
+// P(B) = 0.1
+// P(C) = 0.1
+// P(D) = 0.2
+//
+// We can find the probability of C or D failing using the formula for the OR Gate.
+// Note that the probability at the OR gate is given by the following formula if x,y,z are
+// independent but not mutually exclusive events (Eq 2.15):
+// P_OR(x,y,z) = P(x) + P(y) + P(z) - P(x,y,z)
+// Thus,
+// P_OR(C,D) = P(C)+P(D)-P(C)*P(D) = 0.28
+// 
+// We can find the probability of T then by using the previous result in our AND Gate.
+// Note that the probability at the AND gate is given by the following formula if x,y,z are
+// independent events (Eq 2.13):
+// P_AND(x,y,z) = P(x)*P(y)*P(z)
+// Thus,
+// P(Y) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028
+//
+
+
+// Before I define some abstract Clafers to represent probabilities I create an abstract Clafer
+// to denote a rational number for our probabilities. We introduce this because current Clafer
+// only supports integer numbers and probability values are always less than 1.
+abstract Rational
+    numerator  ->> integer
+    denominator ->> integer
+
+// I then  define the probability to be a rational number with some constraints on the rational
+// number to conform to the axioms of probability.
+abstract Probability : Rational
+    [numerator <= denominator]
+    [numerator >= 0 && denominator > 0]
+
+abstract Failure : Probability
+    xor FailureClassification
+        Omission
+        Comission
+
+abstract BasicEvent : Failure
+
+// The abstract Clafer for failure expression represents an boolean expression between 2
+// probabilities which results in a probability. The FailureExpression clafer is refined
+// in the following abstract Clafers to denote boolean operations.
+abstract FailureExpression : Failure
+    operand1 -> Failure
+    operand2 -> Failure ?
+    [operand1.FailureClassification.Omission => this.FailureClassification.Omission]
+    [operand1.FailureClassification.Comission => this.FailureClassification.Comission]
+
+    
+// The failure expression for an AND boolean expression.
+abstract AND : FailureExpression
+    [operand2]
+    tempNumerator ->> integer = operand1.numerator.ref*operand2.numerator.ref
+    tempDenominator ->> integer = operand1.denominator.ref*operand2.denominator.ref
+    [this.numerator = tempNumerator.ref]
+    [this.denominator = tempDenominator.ref]
+    // The failure classifications must be equivelant
+    //[operand1.FailureClassification <=> operand2.FailureClassification]
+
+// The failure expression for an OR boolean expression
+abstract OR : FailureExpression
+    [operand2]
+    // The following expression results in a Choco Error. Comment out lines 123-125 to test
+    //tempNumerator ->> integer = operand1.numerator * operand2.denominator + operand2.numerator * operand1.denominator - operand1.numerator * operand2.numerator
+    tempExp ->> integer = (operand1.numerator*operand2.denominator)
+    tempExp2 ->> integer = (operand2.numerator*operand1.denominator)
+    tempNumerator ->> integer = tempExp+tempExp2 - (operand1.numerator*operand2.numerator)
+    tempDenominator ->> integer = operand1.denominator * operand2.denominator
+    [this.denominator = tempDenominator]
+    [this.numerator = tempNumerator]
+    // The failure classifications must be equivelant
+    [operand1.FailureClassification <=> operand2.FailureClassification]
+
+// This failure expression is used to copy a single basic event that will cause a failure. We
+// do this because we don't want to reference basic events of other components we only want to
+// reference their result of a failure expression.
+abstract NOP : FailureExpression
+    [no operand2]
+    tempNumerator ->> integer = operand1.numerator
+    tempDenominator ->> integer = operand1.denominator
+    [this.numerator = tempNumerator]
+    [this.denominator = tempDenominator]
+    
+
+abstract ComponentFailure : Failure
+    exp -> FailureExpression
+    [exp.FailureClassification.Omission => this.FailureClassification.Omission]
+    [exp.FailureClassification.Comission => this.FailureClassification.Comission]
+    [this.numerator = exp.numerator.ref]
+    [this.denominator = exp.denominator.ref]
+
+
+
+abstract PortFailure : Failure
+    exp -> FailureExpression
+    //port -> Port
+    [exp.FailureClassification.Omission => this.FailureClassification.Omission]
+    [exp.FailureClassification.Comission => this.FailureClassification.Comission]
+    [this.numerator = exp.numerator.ref]
+    [this.denominator = exp.denominator.ref]
+
+abstract Component
+    ports -> Port *
+    inputPorts -> InPort *
+    outputPorts -> OutPort *
+    // Populate the inputPorts set with all the ports who are type input
+    [all p : ports | (p in inputPorts) <=> p.type.input]
+    // Remove all nodes in inputPorts that don't belong to ports
+    [no n : inputPorts | !(n in ports)]
+    // Populate the outputPorts set with all the ports who are type output
+    [all p : ports | (p in outputPorts) <=> p.type.output]
+    // Remove all nodes in outputPorts that don't belong to ports
+    [no n : outputPorts | !(n in ports)]
+
+    // Define a set of basic events (write a constraint for this)
+    basicEvents -> BasicEvent *
+
+
+
+abstract SourceComponent : Component
+
+abstract SinkComponent : Component
+
+abstract Connection
+    source -> Port
+    sink -> Port
+    xor type
+        Series
+        Parallel
+    // We want to propogate errors from the source to the sink.
+    [sink.failure.ref = source.failure.ref]
+
+abstract Port
+    failure -> PortFailure ?
+    xor type
+        output
+        input
+abstract OutPort : Port
+    [type.output]
+abstract InPort : Port
+    [type.input]
+
+abstract System
+    connections -> Connection *
+    // is it possible to have a constraint that will get all Connection clafers?
+    parallelConnections -> Connection *
+    [all c : connections | (c in parallelConnections) <=> c.type.Parallel]
+    seriesConnections -> Connection *
+    [all c : connections | (c in seriesConnections) <=> c.type.Series]
+
+    // For every Connection in System add it to the set connections
+    // How would I say:
+    // "For all Connection as c, c is in connections iff c.parent is this"
+    [all c : Connection | (c in connections)]
+
+    // Make a constraint for these as well
+    sourceComponents -> SourceComponent *
+    sinkComponents -> SinkComponent *
+    components -> Component *
+
+    
+// Concrete clafer for represent "no failure possible"
+NoFailure : Failure
+    [numerator = 0 && denominator = 1]
+
+
+
+
+// Next the system level Clafer is defined (i.e. the Clafer that contains the entire structural
+// model). We will call this system "SimpleSystem"
+SimpleSystem : System
+    // Now for each of the components in our simple system we will define the properties for
+    // each of the individual components. For each component we will define the connections it
+    // makes. Think of the connections as 
+    compX : SourceComponent
+        // Define our output ports
+        dataOut1 : OutPort
+            [failure = compX.pFailure]
+        dataOut2 : OutPort
+            [failure = compX.pFailure]
+        dataOut3 : OutPort
+            [failure = compX.pFailure]
+        [ports = (dataOut1, dataOut2, dataOut3)]
+        pFailure : PortFailure
+            fExp : NOP
+            [fExp.operand1 = NoFailure]
+            [this.exp = fExp]
+    compA : Component
+        dataOut : OutPort
+            [failure = compA.pFailure]
+        dataIn : InPort
+        [ports = (dataIn, dataOut)]
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 1 && denominator = 10]
+            [FailureClassification.Omission]
+        [basicEvents = internalFailure]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            fExp : NOP // Can we rework this with redefinition?
+            [fExp.operand1 = compA.internalFailure]
+            [this.exp  = fExp] // set the failure expression
+
+    compB : Component
+        dataOut : OutPort
+            [failure = compB.pFailure]
+        dataIn : InPort
+        [ports = (dataIn, dataOut)]
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 1 && denominator = 10]
+            [FailureClassification.Omission]
+        [basicEvents = internalFailure]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            fExp : NOP // Can we rework this with redefinition?
+            [fExp.operand1 = compB.internalFailure]
+            [this.exp  = fExp] // set the failure expression
+    compC : Component
+        dataOut : OutPort
+            [failure = compC.pFailure]
+        dataIn : InPort
+        [ports = (dataIn, dataOut)]
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 1 && denominator = 10]
+            [FailureClassification.Omission]
+        [basicEvents = internalFailure]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            fExp : NOP // Can we rework this with redefinition?
+            [fExp.operand1 = compC.internalFailure]
+            [this.exp  = fExp] // set the failure expression
+    compD : Component
+        dataOut : OutPort
+            [failure = compD.pFailure]
+        dataIn : InPort
+        [ports = (dataIn, dataOut)]
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 2 && denominator = 10]
+            [FailureClassification.Omission]
+        [basicEvents = internalFailure]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            fExp : OR // Can we rework this with redefinition?
+            [fExp.operand1 = compD.internalFailure]
+            [fExp.operand2 = compD.dataIn.failure]
+            [this.exp  = fExp] // set the failure expression
+    compY : SinkComponent
+        dataIn1 : InPort
+        dataIn2 : InPort
+        dataIn3 : InPort
+        [ports = (dataIn1, dataIn2, dataIn3)]
+
+
+        // create the intermediate expression, this will change with product
+        intExpression : AND
+        [intExpression.operand1 = compY.dataIn1.failure]
+        [intExpression.operand2 = compY.dataIn2.failure]
+        cFailure : ComponentFailure
+            fExp : AND
+            [fExp.operand1 = compY.intExpression]
+            [fExp.operand2 = compY.dataIn3.failure]
+            [this.exp = fExp]
+
+
+    // Now lets define some connections
+    conX_A : Connection
+        [source = compX.dataOut1]
+        [sink = compA.dataIn]
+        [type.Series]
+    conX_B : Connection
+        [source = compX.dataOut2]
+        [sink = compB.dataIn]
+        [type.Series]
+    conX_C : Connection
+        [source = compX.dataOut3]
+        [sink = compC.dataIn]
+        [type.Series]
+    conA_Y : Connection
+        [source = compA.dataOut]
+        [sink = compY.dataIn1]
+        [type.Parallel]
+    conB_Y : Connection
+        [source = compB.dataOut]
+        [sink = compY.dataIn2]
+        [type.Parallel]
+    conD_Y : Connection
+        [source = compD.dataOut]
+        [sink = compY.dataIn3]
+        [type.Parallel]
+    conC_D : Connection
+        [source = compC.dataOut]
+        [sink = compD.dataIn]
+        [type.Series]
+
+    // Define our sets of components -- replace with a constraint in abstract system later
+    [sourceComponents = compX]
+    [sinkComponents = compY]
+    [components = (compA, compB, compC, compD)]
+    
+
+
+// Potential addition to Clafer:
+// -----------------------------
+//
+// One potential addition that would simplify the model immensely is a product operation on a
+// set similiar to sum.
+// Example:
+// myBag->> integer * = (1, 2, 3, 4, 5)
+// bagProduct ->> integer = [product myBag] // 1*2*3*4*5 = 120
+//
+// This addition would allow us to calcualte the probability of a boolean expression on a 
+// set (of arbitrary length) of operands.

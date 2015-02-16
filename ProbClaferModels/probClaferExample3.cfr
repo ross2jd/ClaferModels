@@ -1,0 +1,86 @@
+abstract Rational
+	nominator -> integer
+	denominator -> integer
+
+abstract Probability :Rational
+	[nominator <= denominator]
+	[nominator >= 0 && denominator > 0]
+
+abstract BasicEvent :Probability
+
+abstract Component
+	inputs -> Component *
+	[all i:inputs: this in i.outputs]
+	outputs -> Component *
+	[all o:outputs: this in o.inputs]
+
+abstract SourceComponent :Component
+	[no inputs]
+
+abstract SinkComponent :Component
+	[no outputs]
+
+abstract FailureExpression :Probability
+	result :Probability
+	operand1 :Probability
+	operand2 :Probability ?
+
+/* one could define sumation and multiplication for rationals, but
+	this quickly gets quite cumbersome without functions
+	(I tried with Stefan) */
+abstract AND :FailureExpression
+	[operand2]
+	[result.nominator = operand1.nominator * operand2.nominator]
+	[result.denominator = operand1.denominator * operand2.denominator]
+
+abstract OR :FailureExpression
+	[operand2]
+	[result.denominator = operand1.denominator * operand2.denominator]
+	[result.nominator =	operand1.nominator * operand2.denominator +
+								operand2.nominator * operand1.denominator -
+								operand1.nominator * operand2.nominator]
+
+// I am not entirely sure why this is needed
+abstract NOP :FailureExpression
+	[no operand2]
+	[result.nominator = operand1.nominator]
+	[result.denominator = operand1.denominator]
+
+SimpleSystem
+	systemComponents -> Component 6
+	[systemComponents = (compX, compA, compB, compC, compD, compY)]
+
+	compX : SourceComponent
+		 [outputs = (compA, compB, compC)]
+	compA : Component
+		 [outputs = (compY)]
+		 internalFailure : Probability
+			  [nominator = 1 && denominator = 10]
+		 failure :NOP
+		 [failure.operand1 = internalFailure]
+	compB : Component
+		 [outputs = (compY)]
+		 internalFailure : Probability
+			  [nominator = 1 && denominator = 10]
+		 failure : NOP
+		 [failure.operand1 = internalFailure]
+	compC : Component
+		 [outputs = (compD)]
+		 internalFailure : BasicEvent
+			  [nominator = 1 && denominator = 10]
+		 failure : NOP
+		 [failure.operand1 = internalFailure]
+	compD : Component
+		 [outputs = (compY)]
+		 internalFailure : BasicEvent
+			  [nominator = 2 && denominator = 10]
+		 failure : OR
+		 [failure.operand1 = internalFailure]
+		 [failure.operand2 = compC.failure]
+	compY : SinkComponent
+		 intermediate : AND
+		 [intermediate.operand1 = compA.failure]
+		 [intermediate.operand2 = compB.failure]
+		 failure : AND
+		 [failure.operand1 = intermediate]
+		 [faliure.operand2 = compD.failure]
