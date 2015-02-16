@@ -80,5 +80,5 @@ independent events (Eq 2.13):
 
 Thus,
 
-```P(Y) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028``
+```P(Y) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028```
 
