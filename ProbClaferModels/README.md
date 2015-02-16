@@ -34,6 +34,7 @@ of components A, B, C, and D fails.
 Let us denote the top event as Y which is the event that our subsystem (A, B, C, D) fails.
 
 The fault tree then would look as follows:
+
 *Fault Tree::*
 ```
                   ---
@@ -53,6 +54,7 @@ The fault tree then would look as follows:
 ```
 
 Now, let us assume that the basic events of A, B, C, D have the following probabilities:
+
 | Component     | Probability   |
 | :-----------: |:-------------:|
 | A             | 0.1           |
@@ -63,14 +65,20 @@ Now, let us assume that the basic events of A, B, C, D have the following probab
 We can find the probability of C or D failing using the formula for the OR Gate.
 Note that the probability at the OR gate is given by the following formula if x,y,z are
 independent but not mutually exclusive events (Eq 2.15):
+
 ```P_OR(x,y,z) = P(x) + P(y) + P(z) - P(x,y,z)```
+
 Thus,
+
 ```P_OR(C,D) = P(C)+P(D)-P(C)*P(D) = 0.28```
 
 We can find the probability of T then by using the previous result in our AND Gate.
 Note that the probability at the AND gate is given by the following formula if x,y,z are
 independent events (Eq 2.13):
+
 ```P_AND(x,y,z) = P(x)*P(y)*P(z)```
+
 Thus,
+
 ```P(Y) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028``
 
