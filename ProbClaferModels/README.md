@@ -11,7 +11,7 @@ This is just an example for prototypying a Clafer model for reliability analysis
 consider the following example taken from Figure 4.14 in "Reliability Engineering and Risk
 Analysis" by Mohammad Modarres, Mark Kaminskiy, Vasiliy Krivtsov
 
-###Structural model::
+*Structural model::*
 ```
                    ---
            |----->| A |------->|
@@ -34,6 +34,7 @@ of components A, B, C, and D fails.
 Let us denote the top event as Y which is the event that our subsystem (A, B, C, D) fails.
 
 The fault tree then would look as follows:
+*Fault Tree::*
 ```
                   ---
                  | Y |
@@ -52,22 +53,24 @@ The fault tree then would look as follows:
 ```
 
 Now, let us assume that the basic events of A, B, C, D have the following probabilities:
-P(A) = 0.1
-P(B) = 0.1
-P(C) = 0.1
-P(D) = 0.2
+| Component     | Probability   |
+| :-----------: |:-------------:|
+| A             | 0.1           |
+| B             | 0.1           |
+| C             | 0.1           |
+| D             | 0.2           |
 
 We can find the probability of C or D failing using the formula for the OR Gate.
 Note that the probability at the OR gate is given by the following formula if x,y,z are
 independent but not mutually exclusive events (Eq 2.15):
-P_OR(x,y,z) = P(x) + P(y) + P(z) - P(x,y,z)
+```P_OR(x,y,z) = P(x) + P(y) + P(z) - P(x,y,z)```
 Thus,
-P_OR(C,D) = P(C)+P(D)-P(C)*P(D) = 0.28
+```P_OR(C,D) = P(C)+P(D)-P(C)*P(D) = 0.28```
 
 We can find the probability of T then by using the previous result in our AND Gate.
 Note that the probability at the AND gate is given by the following formula if x,y,z are
 independent events (Eq 2.13):
-P_AND(x,y,z) = P(x)*P(y)*P(z)
+```P_AND(x,y,z) = P(x)*P(y)*P(z)```
 Thus,
-P(Y) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028
+```P(Y) = P_AND(A,B,P_OR(C,D)) = 0.1*0.1*0.28 = 0.0028``
 
