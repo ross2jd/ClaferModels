@@ -1,7 +1,7 @@
 // probClaferExample4.cfr
 // Author: Jordan A. Ross
 // Date: 1/26/2015
-// Last updated: 2/10/2015 
+// Last updated: 2/17/2015 
 //
 // This version of the example is one that currently won't compile. We are using this model
 // to show how we eventually want to be able to model this example in Clafer.
@@ -106,7 +106,7 @@ abstract AND : FailureExpression
     [this.numerator = tempNumerator.ref]
     [this.denominator = tempDenominator.ref]
     // The failure classifications must be equivelant
-    //[operand1.FailureClassification <=> operand2.FailureClassification]
+    [operand1.FailureClassification <=> operand2.FailureClassification]
 
 // The failure expression for an OR boolean expression
 abstract OR : FailureExpression
@@ -144,7 +144,6 @@ abstract ComponentFailure : Failure
 
 abstract PortFailure : Failure
     exp -> FailureExpression
-    //port -> Port
     [exp.FailureClassification.Omission => this.FailureClassification.Omission]
     [exp.FailureClassification.Comission => this.FailureClassification.Comission]
     [this.numerator = exp.numerator.ref]
@@ -163,9 +162,6 @@ abstract Component
     // Remove all nodes in outputPorts that don't belong to ports
     [no n : outputPorts | !(n in ports)]
 
-    // Define a set of basic events (write a constraint for this)
-    basicEvents -> BasicEvent *
-
 
 
 abstract SourceComponent : Component
@@ -175,10 +171,6 @@ abstract SinkComponent : Component
 abstract Connection
     source -> Port
     sink -> Port
-    xor type
-        Series
-        Parallel
-    // We want to propogate errors from the source to the sink.
     [sink.failure.ref = source.failure.ref]
 
 abstract Port
@@ -194,11 +186,6 @@ abstract InPort : Port
 abstract System
     connections -> Connection *
     // is it possible to have a constraint that will get all Connection clafers?
-    parallelConnections -> Connection *
-    [all c : connections | (c in parallelConnections) <=> c.type.Parallel]
-    seriesConnections -> Connection *
-    [all c : connections | (c in seriesConnections) <=> c.type.Series]
-
     // For every Connection in System add it to the set connections
     // How would I say:
     // "For all Connection as c, c is in connections iff c.parent is this"
@@ -246,7 +233,6 @@ SimpleSystem : System
         internalFailure : BasicEvent
             [numerator = 1 && denominator = 10]
             [FailureClassification.Omission]
-        [basicEvents = internalFailure]
 
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
@@ -264,7 +250,6 @@ SimpleSystem : System
         internalFailure : BasicEvent
             [numerator = 1 && denominator = 10]
             [FailureClassification.Omission]
-        [basicEvents = internalFailure]
 
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
@@ -281,7 +266,6 @@ SimpleSystem : System
         internalFailure : BasicEvent
             [numerator = 1 && denominator = 10]
             [FailureClassification.Omission]
-        [basicEvents = internalFailure]
 
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
@@ -298,7 +282,6 @@ SimpleSystem : System
         internalFailure : BasicEvent
             [numerator = 2 && denominator = 10]
             [FailureClassification.Omission]
-        [basicEvents = internalFailure]
 
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
@@ -328,31 +311,31 @@ SimpleSystem : System
     conX_A : Connection
         [source = compX.dataOut1]
         [sink = compA.dataIn]
-        [type.Series]
+        //[type.Series]
     conX_B : Connection
         [source = compX.dataOut2]
         [sink = compB.dataIn]
-        [type.Series]
+        //[type.Series]
     conX_C : Connection
         [source = compX.dataOut3]
         [sink = compC.dataIn]
-        [type.Series]
+        //[type.Series]
     conA_Y : Connection
         [source = compA.dataOut]
         [sink = compY.dataIn1]
-        [type.Parallel]
+        //[type.Parallel]
     conB_Y : Connection
         [source = compB.dataOut]
         [sink = compY.dataIn2]
-        [type.Parallel]
+        //[type.Parallel]
     conD_Y : Connection
         [source = compD.dataOut]
         [sink = compY.dataIn3]
-        [type.Parallel]
+        //[type.Parallel]
     conC_D : Connection
         [source = compC.dataOut]
         [sink = compD.dataIn]
-        [type.Series]
+        //[type.Series]
 
     // Define our sets of components -- replace with a constraint in abstract system later
     [sourceComponents = compX]
