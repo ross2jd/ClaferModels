@@ -5,6 +5,31 @@ This folder contains Clafer models related to the exploration of modeling probab
 * Section 1 gives an overview of the example that I am using in many of the models
 * Section 2 gives an overview of each of the models that implements the example given in Section 1.
 
+##Table of Contents## 
+- [Section 1: Reliability Example](#)
+- [Section 2: Clafer Models for Reliability Example](#)
+  - [probClaferExample - A first approach](#)
+	- [probClaferExample2 - The road to Rationals and Functions](#)
+		- [Probabilities as Rationals](#)
+		- [Introducing Fault Expression "Functions"](#)
+	- [probClaferExample4 - Ports, Connections, and a Smarter Model](#)
+		- [Ports and Connections](#)
+		- [Components and the System](#)
+		- [Adding Failures to Ports and Components](#)
+		- [Concluding Thoughts](#)
+- [productExample](#)
+	- [The 'product' Construct](#)
+		- [Current Limitations](#)
+	- [The New Failure Expressions](#)
+		- [FailureExpression](#)
+		- [NOP](#)
+		- [AND](#)
+		- [OR](#)
+	- [probClaferExampleDNC](#)
+	- [Nested Inheritance](#)
+	- [Redefinition](#)
+	- [How much do we automate?](#)
+
 
 ## Section 1: Reliability Example ##
 This is just an example for prototypying a Clafer model for reliability analysis. We
