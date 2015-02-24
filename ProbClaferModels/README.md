@@ -286,8 +286,8 @@ abstract ComponentFailure : Failure
 This model changes alot of the structural information of the model as well as introducing some concepts for associating failures to ports and components. This model will need to be refined as the Clafer language develops so that we can create smarter constraints to limit the amount of information the modeler needs to enter to model their system. With this changes it becomes possible to model a case study example such as a automotive power window.
 
 ### productExample ###
-- **Built with Clafer Compiler v3.6.1**
-- **Instances generated with Clafer Choco IG v3.6.1**
+- **Built with Clafer Compiler v0.3.8**
+- **Instances generated with Clafer Choco IG v0.3.8**
 
 We take a slight detour here and explore an exciting new construct that was recently introduced to Clafer. As per request there now exists a construct to take a product over a set or bag of integers! The construct is still early on in its release so there are some quirks that still need to be worked out but this is a big step forward. This section is going to take a small slice of the probExampleClafer models and just focus on the failure expressions.
 
