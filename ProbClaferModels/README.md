@@ -6,7 +6,7 @@ This folder contains Clafer models related to the exploration of modeling probab
 * Section 2 gives an overview of each of the models that implements the example given in Section 1.
 
 ## Table of Contents ##
-- [Section 1: Reliability Example](#)
+- [Section 1: Reliability Example](#section-1:-Reliability-Example)
 - [Section 2: Clafer Models for Reliability Example](#)
   - [probClaferExample - A first approach](#)
 	- [probClaferExample2 - The road to Rationals and Functions](#)
