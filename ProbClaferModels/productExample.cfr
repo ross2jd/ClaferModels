@@ -1,0 +1,59 @@
+// Product Example
+abstract Rational
+    numerator  ->> integer
+    denominator ->> integer
+
+// I then  define the probability to be a rational number with some constraints on the rational
+// number to conform to the axioms of probability.
+abstract Probability : Rational
+    [numerator <= denominator]
+    [numerator >= 0 && denominator > 0]
+    // The complement of a probability is 1-p
+    // for a rational number it turns into (den-num)/den
+    complement : Rational
+    	[numerator = parent.denominator.ref - parent.numerator.ref] // need the refs here
+    	[denominator = parent.denominator.ref] // need the refs here
+
+abstract FailureExpression : Probability
+    operands -> Probability *
+
+abstract AND : FailureExpression
+    [numerator = product operands.numerator]
+    [denominator = product operands.denominator]
+
+// OR can be expressed as 1 - product(probabilites.complements)
+abstract OR : FailureExpression
+    [numerator = product tempProbability.complement.numerator]
+    [denominator = product tempProbability.complement.denominator]
+    tempProbability : Probability
+    [tempProbability.numerator = product operands.complement.numerator]
+    [tempProbability.denominator = product operands.complement.denominator]
+
+abstract NOP : FailureExpression
+    [#operands = 1]
+    [numerator  = operands.numerator.ref]
+    [denominator = operands.denominator.ref]
+
+
+f1 : Probability
+	[numerator = 1 && denominator = 10]
+f2 : Probability
+	[numerator = 1 && denominator = 10]
+f3 : Probability
+	[numerator = 2 && denominator = 10]
+f4 : Probability
+	[numerator = 1 && denominator = 10]
+f5 : Probability
+    [numerator = 2 && denominator = 10]
+
+fExp : OR
+	[operands = (f1, f3)]
+
+nopExp : NOP
+    [operands = f2]
+
+andExp : AND
+    [operands = (f4, f5)]
+
+
+

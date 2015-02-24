@@ -265,4 +265,147 @@ abstract ComponentFailure : Failure
 #### Concluding Thoughts ####
 This model changes alot of the structural information of the model as well as introducing some concepts for associating failures to ports and components. This model will need to be refined as the Clafer language develops so that we can create smarter constraints to limit the amount of information the modeler needs to enter to model their system. With this changes it becomes possible to model a case study example such as a automotive power window.
 
+## productExample ##
+- **Built with Clafer Compiler v3.6.1**
+- **Instances generated with Clafer Choco IG v3.6.1**
 
+We take a slight detour here and explore an exciting new construct that was recently introduced to Clafer. As per request there now exists a construct to take a product over a set or bag of integers! The construct is still early on in its release so there are some quirks that still need to be worked out but this is a big step forward. This section is going to take a small slice of the probExampleClafer models and just focus on the failure expressions.
+
+### The 'product' Construct ###
+Before we go into the failure expressions we give a simple example of how the product example works as follows:
+```clafer
+abstract N ->> integer
+
+n1 : N = 1
+n2 : N = 2
+n3 : N = 3
+n4 : N = 2
+n5 : N = 3
+
+p -> integer = product N
+```
+This simple example will take the product over the **bag** (1, 2, 3, 2, 3) which evaluates to 36
+
+#### Current Limitations ####
+As stated earlier, the product construct is still in its early stages of release so there are some limitiations that have not been addressed yet. This section will be updated as they do become updated as well as updates to the models. The big limitation right now is the max size of the integer. When you run the Choco IG you must specify the max and min int (of course there are defaults). This max (and min) integer has to be greater than the biggest integer your model will generate. For example if we are multiplying 10 and 100 for our denominators I would need a max int of 1000 to generate instances. Now, lets say our max integer is 2000 (still not large enough for our probClaferExample models) and we perform a product on at most 3 integers. Choco because of the solver it uses needs to calculate the upper bound of every expression. For the product expression it calculates the uppper bound (for this example) as 2000^3 = 8000000000 which is bigger than the biggest 32-bit integer so it overflows and returns 0 instances. So the short and sweet of it is that we can't use product right now in our probClaferExample models because our integers are too large.
+
+### The New Failure Expressions ###
+Here we are going to explore each of the new failure expressions with the use of product!
+#### FailureExpression ####
+The first Clafer we need to change is the FailureExpression since we will now allow the user to give an arbitrary number of operands so we define it as follows:
+```clafer
+abstract FailureExpression : Probability
+    operands -> Probability *
+```
+#### NOP ####
+The NOP operation is relatively simple to change as well. First we can only have one operand so we enforce that with constraint C1. We then just copy the operand numerator and denominator.
+```clafer
+abstract NOP : FailureExpression
+    [#operands = 1] // C1
+    [numerator  = operands.numerator.ref]
+    [denominator = operands.denominator.ref]
+```
+#### AND ####
+The AND operation is the easiest to change since we just need to multiply the numerators and denominators of the operands.
+```clafer
+abstract AND : FailureExpression
+    [numerator = product operands.numerator]
+    [denominator = product operands.denominator]
+```
+#### OR ####
+Lastly comes to problem child... The OR required some more thinking of how to implement. Remember back to probClaferExample2 where we first explained how the OR works. We are going to change how we implement the OR now because it is hard (and possibly impossible) to use product and sum to use the same equation. Therefore we are going to use an equivelant form of the equation. The figure below shows a Venn Diagram of 3 probabilites to illustrate our alternative from of the equation.
+![Probability Venn Diagram](images/OR_ProbVennDiagram.png)
+The left Venn Diagram is the probability that we don't have any of the events. This would equate to the following:
+```
+P_OR' = (1-p(1))*(1-p(2))*(1-p(3))
+```
+What we want is complement of this probability. Thus, if we take the complement of this probability we get the right side of the figure and we have the following equation:
+```
+P_OR = 1 - P_OR'
+```
+We can generalize this formula to be over any number of probabilities. Thus we are just taking the product over the complements of the operands and then the taking the complement of that result. Thus we need to modify our probability Clafer as follows:
+```clafer
+abstract Probability : Rational
+    [numerator <= denominator]
+    [numerator >= 0 && denominator > 0]
+    complement : Rational
+      [numerator = parent.denominator.ref - parent.numerator.ref]
+      [denominator = parent.denominator.ref]
+```
+We get the complement using the fact that if we subtract 1 from a rational number we are left with:
+```
+1 - n/d = (d-n)/d
+```
+
+Now we can define the OR failure expression as follows:
+```clafer
+abstract OR : FailureExpression
+    [numerator = product tempProbability.complement.numerator]
+    [denominator = product tempProbability.complement.denominator]
+    tempProbability : Probability
+    [tempProbability.numerator = product operands.complement.numerator]
+    [tempProbability.denominator = product operands.complement.denominator]
+```
+
+
+### probClaferExampleDNC ###
+- **Built with future compiler :)**
+- **Instances generated with future version of Clafer Choco IG :)**
+
+This model is quite different from the previous versions in the fact that it does not compile or generate instances. This model is used more as a "wish list" or a guide to help develop Clafer further in identifying features that would be nice to have or could improve the performance. This version that does not compile is based off of probClaferExample5 (still in the works).
+
+### Nested Inheritance ###
+The first stop on our journey to a better Clafer is nested inheritance. While this feature is not necesarily leveraged at this point (more on this later) it is a nice way to arrange Clafers together so that we can write constraints that were not possible before. Take for example our System that we introduced in probClaferExample4. We can now define it as follows:
+
+```clafer
+abstract System
+    abstract Connection
+        source -> Port
+        sink -> Port
+        [sink.failure.ref = source.failure.ref]
+    
+    abstract Component
+        abstract Port
+            failure -> PortFailure ?
+        abstract OutPort : Port
+        abstract InPort : Port
+        
+        inputPorts -> InPort *
+        [inputPorts = this.InPort]
+        outputPorts -> OutPort *
+        [outputPorts = this.OutPort]
+
+    abstract SourceComponent : Component
+    abstract SinkComponent : Component
+
+    connections -> Connection *
+    [connections = this.Connection]
+
+    sourceComponents -> SourceComponent *
+    [sourceComponents = this.SourceComponent]
+    sinkComponents -> SinkComponent *
+    [sinkComponents = this.SinkComponent]
+    components -> Component *
+    [components = this.Component]
+```
+
+Now we can write constraints to get all of the connections that belong to a specific instance of a system which was never possible before! Again, while the benifits have not reaped for this example (yet) one could see some benifits for timing where we could sum over all connections that have some attribute or even wires.
+
+### Redefinition ###
+Another "wish list" item that could be leveraged right away is redefinition. I will leave the semantical definition for others, but in essence what we want to be able to do is to redefine a Clafer to another Clafer. For example we can consider the PortFailure as follows:
+```clafer
+abstract PortFailure : Failure
+    exp : FailureExpression
+
+ pFailure : PortFailure
+            exp : OR 
+            [exp.operands = compD.dataIn.failure, compD.internalFailure]
+```
+
+We see that PortFailure has a child Clafer "exp" that is a FailureExpression. But, as discussed in probClaferExample2 we have refined FailureExpression into 3 other Clafers (AND, OR, NOP). We want to define PortFailure to have a general FailureExpression and then when the user instantiates a PortFailure they can *redefine* exp to be the specific operation they are looking for. This is done through the line:
+```clafer
+exp : OR
+```
+
+### How much do we automate? ###
+This section is a little different from the rest. I just wanted a space to share and explore some current thoughts on how much we should automate in the failure analysis. As I develop these models and introduce some of these new constructs and wish list items it becomes apparent that we could create a library of Clafers that could potentialy conduct failure analysis by simply defining some components, connections, and basic events. The downfall to this is that the systems engineer loses granularity of what they can control in the model. So my question is, at what level of granularity should we let a systems engineer model the failure analysis?

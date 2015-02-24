@@ -1,0 +1,213 @@
+// probClaferExample4.cfr
+// Author: Jordan A. Ross
+// Date: 1/26/2015
+// Last updated: 2/23/2015 
+//
+// NOTE:: This model does not compile, it is used as a medium to show how new constructs will
+// be used in Clafer. 
+//
+// See README.md for example description
+
+
+abstract Rational
+    numerator  ->> integer
+    denominator ->> integer
+
+abstract Probability : Rational
+    [numerator <= denominator]
+    [numerator >= 0 && denominator > 0]
+    complement : Rational
+        [numerator = parent.denominator.ref - parent.numerator.ref]
+        [denominator = parent.denominator.ref]
+
+enum FailureClassification = Omission | Comission
+
+abstract Failure : Probability
+    class : FailureClassification
+
+abstract BasicEvent : Failure
+
+
+abstract FailureExpression : Failure
+    operands -> Failure *
+    // C: The failure classification for this clafer is equal to that of the operands
+    [this.class in operands.class]
+    // C: All failure classifications are the same for the operands
+    [all c : operands.class | c = this.class]
+
+
+abstract AND : FailureExpression
+    [numerator = product operands.numerator]
+    [denominator = product operands.denominator]
+
+abstract OR : FailureExpression
+    [[numerator = product tempProbability.complement.numerator]
+    [denominator = product tempProbability.complement.denominator]
+    tempProbability : Probability
+    [tempProbability.numerator = product operands.complement.numerator]
+    [tempProbability.denominator = product operands.complement.denominator]
+
+abstract NOP : FailureExpression
+    [#operands = 1]
+    [numerator  = operands.numerator.ref]
+    [denominator = operands.denominator.ref]
+    
+
+abstract ComponentFailure : Failure
+    exp : FailureExpression
+    // C: The failure classificaiton for this clafer is the same as for the exp
+    [exp.class = this.class]
+    [this.numerator = exp.numerator.ref]
+    [this.denominator = exp.denominator.ref]
+
+
+
+abstract PortFailure : Failure
+    exp : FailureExpression
+    // C: The failure classificaiton for this clafer is the same as for the exp
+    [exp.class = this.class]
+    [this.numerator = exp.numerator.ref]
+    [this.denominator = exp.denominator.ref]
+
+
+abstract System
+    abstract Connection
+        source -> Port
+        sink -> Port
+        [sink.failure.ref = source.failure.ref]
+    
+    abstract Component
+        abstract Port
+            failure -> PortFailure ?
+        abstract OutPort : Port
+        abstract InPort : Port
+        
+        inputPorts -> InPort *
+        [inputPorts = this.InPort]
+        outputPorts -> OutPort *
+        [outputPorts = this.OutPort]
+
+    abstract SourceComponent : Component
+    abstract SinkComponent : Component
+
+    connections -> Connection *
+    [connections = this.Connection]      
+
+    sourceComponents -> SourceComponent *
+    [sourceComponents = this.SourceComponent]
+    sinkComponents -> SinkComponent *
+    [sinkComponents = this.SinkComponent]
+    components -> Component *
+    [components = this.Component]
+
+    
+// Concrete clafer for represent "no failure possible"
+NoFailure : Failure
+    [numerator = 0 && denominator = 1]
+
+
+SimpleSystem : System
+    compX : SourceComponent
+        dataOut1 : OutPort
+            [failure = compX.pFailure]
+        dataOut2 : OutPort
+            [failure = compX.pFailure]
+        dataOut3 : OutPort
+            [failure = compX.pFailure]
+
+        pFailure : PortFailure
+            // We redefine 'exp' in PortFailure to be a specific FailureExpression, namely NOP
+            exp : NOP
+            [exp.operands = NoFailure]
+    compA : Component
+        dataOut : OutPort
+            [failure = compA.pFailure]
+        dataIn : InPort
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 1 && denominator = 10]
+            [class = Omission]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            // We redefine 'exp' in PortFailure to be a specific FailureExpression, namely NOP
+            exp : NOP
+            [exp.operands = compA.internalFailure]
+
+    compB : Component
+        dataOut : OutPort
+            [failure = compB.pFailure]
+        dataIn : InPort
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 1 && denominator = 10]
+            [class = Omission]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            exp : NOP
+            [exp.operands= compB.internalFailure]
+    compC : Component
+        dataOut : OutPort
+            [failure = compC.pFailure]
+        dataIn : InPort
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 1 && denominator = 10]
+            [class = Omission]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            exp : NOP
+            [exp.operands = compC.internalFailure]
+    compD : Component
+        dataOut : OutPort
+            [failure = compD.pFailure]
+        dataIn : InPort
+
+        // Basic events
+        internalFailure : BasicEvent
+            [numerator = 2 && denominator = 10]
+            [class = Omission]
+
+        // Port failures. This will define a failure that we can link to a port
+        pFailure : PortFailure
+            exp : OR 
+            [exp.operands = compD.dataIn.failure, compD.internalFailure]
+    compY : SinkComponent
+        dataIn1 : InPort
+        dataIn2 : InPort
+        dataIn3 : InPort
+        
+        cFailure : ComponentFailure
+            exp : AND
+            [exp.operands= (compY.dataIn1.failure, compY.dataIn2.failure, compY.dataIn3.failure)]
+
+
+    // Now lets define some connections
+    conX_A : Connection
+        [source = compX.dataOut1]
+        [sink = compA.dataIn]
+    conX_B : Connection
+        [source = compX.dataOut2]
+        [sink = compB.dataIn]
+    conX_C : Connection
+        [source = compX.dataOut3]
+        [sink = compC.dataIn]
+    conA_Y : Connection
+        [source = compA.dataOut]
+        [sink = compY.dataIn1]
+    conB_Y : Connection
+        [source = compB.dataOut]
+        [sink = compY.dataIn2]
+    conD_Y : Connection
+        [source = compD.dataOut]
+        [sink = compY.dataIn3]
+    conC_D : Connection
+        [source = compC.dataOut]
+        [sink = compD.dataIn]
+
+    

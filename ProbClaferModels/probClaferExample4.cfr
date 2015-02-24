@@ -3,9 +3,6 @@
 // Date: 1/26/2015
 // Last updated: 2/17/2015 
 //
-// This version of the example is one that currently won't compile. We are using this model
-// to show how we eventually want to be able to model this example in Clafer.
-//
 // This is just an example for prototypying a Clafer model for reliability analysis. We
 // consider the following example taken from Figure 4.14 in "Reliability Engineering and Risk
 // Analysis" by Mohammad Modarres, Mark Kaminskiy, Vasiliy Krivtsov
