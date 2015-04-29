@@ -15,24 +15,28 @@ abstract Probability : Rational
     	[denominator = parent.denominator.ref] // need the refs here
 
 abstract FailureExpression : Probability
-    operands -> Probability *
+    operand -> Probability *
 
 abstract AND : FailureExpression
-    [numerator = product operands.numerator]
-    [denominator = product operands.denominator]
+    [numerator = product operand.numerator]
+    [denominator = product operand.denominator]
 
 // OR can be expressed as 1 - product(probabilites.complements)
 abstract OR : FailureExpression
+	myOp -> Probability * = operand
+		complement : Rational
+			[numerator = parent.denominator.ref - parent.numerator.ref] // need the refs here
+    		[denominator = parent.denominator.ref] // need the refs here
+    tempProbability : Probability
+    [tempProbability.numerator = product myOp.complement.numerator]
+    [tempProbability.denominator = product myOp.complement.denominator]
     [numerator = product tempProbability.complement.numerator]
     [denominator = product tempProbability.complement.denominator]
-    tempProbability : Probability
-    [tempProbability.numerator = product operands.complement.numerator]
-    [tempProbability.denominator = product operands.complement.denominator]
 
 abstract NOP : FailureExpression
-    [#operands = 1]
-    [numerator  = operands.numerator.ref]
-    [denominator = operands.denominator.ref]
+    [#operand = 1]
+    [numerator  = operand.numerator.ref]
+    [denominator = operand.denominator.ref]
 
 
 f1 : Probability
@@ -47,13 +51,13 @@ f5 : Probability
     [numerator = 2 && denominator = 10]
 
 fExp : OR
-	[operands = (f1, f3)]
+	[operand = (f1, f3)]
 
 nopExp : NOP
-    [operands = f2]
+    [operand = f2]
 
 andExp : AND
-    [operands = (f4, f5)]
+    [operand = (f4, f5)]
 
 
 

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<style>.identifier{}
+.keyword{font-weight:bold}
+.reference{}
+.code { background-color: lightgray; padding: 5px 5px 5px 5px; border: 1px solid darkgray; margin-bottom: 15px; 
+        font-family: Pragmata, Menlo, 'DejaVu LGC Sans Mono', 'DejaVu Sans Mono', Consolas, 'Everson Mono', 'Lucida Console', 'Andale Mono', 'Nimbus Mono L', 'Liberation Mono', FreeMono, 'Osaka Monospaced', Courier, 'New Courier', monospace; }
+.standalonecomment { color: green; font-style:italic }
+.inlinecomment { color: green; padding-left:20px; font-style:italic }
+.error{background-color: yellow; color: red }
+.indent{padding-left:20px}
+a[href$='Lookup failed'] {color: red}
+a[href$='Uid not found'] {color: red}
+a[href$='Ambiguous name'] {color: yellow}
+
+</style></head>
+<body>
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_SystemArchitecture">SystemArchitecture</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FunctionalAnalysis">FunctionalAnalysis</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FunctionalDesignArchitecture">FunctionalDesignArchitecture</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Hardware">Hardware</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Device">Device</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Feature">Feature</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Deployment">Deployment</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DeviceTopology">DeviceTopology</span></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FunctionalAnalysisComponent">FunctionalAnalysisComponent</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_deployedTo">deployedTo</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#parent"><span class="reference">parent</span></a> in <a href="#this"><span class="reference">this</span></a>.<a href="#c0_deployedFrom"><span class="reference">deployedFrom</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_AnalysisFunction">AnalysisFunction</span><span class="keyword"> : </span><a href="#c0_FunctionalAnalysisComponent"><span class="reference">FunctionalAnalysisComponent</span></a></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FunctionalDevice">FunctionalDevice</span><span class="keyword"> : </span><a href="#c0_FunctionalAnalysisComponent"><span class="reference">FunctionalAnalysisComponent</span></a></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Command">Command</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_sender">sender</span><span class="keyword"> -> </span><a href="#c0_FunctionalAnalysisComponent"><span class="reference">FunctionalAnalysisComponent</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_receiver">receiver</span><span class="keyword"> -> </span><a href="#c0_FunctionalAnalysisComponent"><span class="reference">FunctionalAnalysisComponent</span></a></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DeviceNode">DeviceNode</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_deployedFrom">deployedFrom</span><span class="keyword"> -> </span><a href="#c0_FunctionalAnalysisComponent"><span class="reference">FunctionalAnalysisComponent</span></a> *
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#parent"><span class="reference">parent</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_smart">smart</span> ?</div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_ElectricalUnit">ElectricalUnit</span><span class="keyword"> : </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_deployedFrom"><span class="reference">deployedFrom</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_ECU">ECU</span><span class="keyword"> : </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Connection">Connection</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_mass">mass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_length">length</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#Uid not found"><span class="reference">length</span></a> &gt; 0 <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Wire">Wire</span><span class="keyword"> : </span><a href="#c0_Connection"><span class="reference">Connection</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_source">source</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_sink">sink</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#Uid not found"><span class="reference">sink</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_LoadWire">LoadWire</span><span class="keyword"> : </span><a href="#c0_Wire"><span class="reference">Wire</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DiscreteWire">DiscreteWire</span><span class="keyword"> : </span><a href="#c0_Wire"><span class="reference">Wire</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DevicePowerWire">DevicePowerWire</span><span class="keyword"> : </span><a href="#c0_Wire"><span class="reference">Wire</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Bus">Bus</span><span class="keyword"> : </span><a href="#c0_Connection"><span class="reference">Connection</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_connectedFrom">connectedFrom</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a> *</div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysFA">WinSubSysFA</span><span class="keyword"> : </span><a href="#c0_FunctionalAnalysis"><span class="reference">FunctionalAnalysis</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinSwitch">WinSwitch</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinRqArbiter">WinRqArbiter</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinController">WinController</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a>
+    <div class="indent">
+    <span class="keyword">xor</span> <span class="claferDecl" id="c0_config">config</span>
+      <div class="indent">
+      <span class="claferDecl" id="c0_noExpress">noExpress</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a></div>
+      <div class="indent">
+      <span class="claferDecl" id="c0_expressDown">expressDown</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a></div>
+      <div class="indent">
+      <span class="claferDecl" id="c0_expressUpDown">expressUpDown</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinMotor">WinMotor</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_CurrentSensor">CurrentSensor</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_localWinReq">localWinReq</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#c0_WinSwitch"><span class="reference">WinSwitch</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_winReq">winReq</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_winCmd">winCmd</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#c0_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_current">current</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PinchDtcSubSysFA">PinchDtcSubSysFA</span><span class="keyword"> : </span><a href="#c0_FunctionalAnalysis"><span class="reference">FunctionalAnalysis</span></a> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_PinchDetection">PinchDetection</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_PositionSensor">PositionSensor</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_object">object</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_position">position</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_PinchDtcSubSysFA"><span class="reference">PinchDtcSubSysFA</span></a> &lt;=&gt; <a href="#c0_pinchProtection"><span class="reference">pinchProtection</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysDN">WinSubSysDN</span><span class="keyword"> : </span><a href="#c0_FunctionalDesignArchitecture"><span class="reference">FunctionalDesignArchitecture</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c1_WinSwitch">WinSwitch</span><span class="keyword"> : </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BCM">BCM</span><span class="keyword"> -> </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_WinMotor">WinMotor</span><span class="keyword"> : </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a>
+    <div class="indent">
+    <span class="claferDecl" id="c0_Driver">Driver</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DoorInline">DoorInline</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a>
+    <div class="indent">
+    <span class="claferDecl" id="c0_LoadPower">LoadPower</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DevicePower">DevicePower</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a> ?</div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_Serial">Serial</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a> ?</div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DiscreteOut">DiscreteOut</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a> ?</div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DrivePowerOut">DrivePowerOut</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a> ?</div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DiscreteIn">DiscreteIn</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a> ?</div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DrivePowerIn">DrivePowerIn</span><span class="keyword"> : </span><a href="#c0_ElectricalUnit"><span class="reference">ElectricalUnit</span></a> ?</div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_LocalNodes">LocalNodes</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a> *</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_LocalSmartNodes">LocalSmartNodes</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a> *</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_LocalOrCentralNodes">LocalOrCentralNodes</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a> *</div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_LocalNodes"><span class="reference">LocalNodes</span></a> = <a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>, <a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> = <a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>, <a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>, <a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> all n<span class="keyword"> : </span><a href="#Lookup failed"><span class="reference">LocalNodes</span></a> | <a href="#n"><span class="reference">n</span></a> in <a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> &lt;=&gt; <a href="#n"><span class="reference">n</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> n<span class="keyword"> : </span><a href="#Lookup failed"><span class="reference">LocalSmartNodes</span></a> |  ! <a href="#n"><span class="reference">n</span></a> in <a href="#c0_LocalNodes"><span class="reference">LocalNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> # <a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> &gt; 0 &lt;=&gt; <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DevicePower"><span class="reference">DevicePower</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysDpl">WinSubSysDpl</span><span class="keyword"> : </span><a href="#c0_Deployment"><span class="reference">Deployment</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_fa">fa</span><span class="keyword"> -> </span><a href="#c0_WinSubSysFA"><span class="reference">WinSubSysFA</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_dn">dn</span><span class="keyword"> -> </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PinchDtcSubSysFA"><span class="reference">PinchDtcSubSysFA</span></a>.<a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PinchDtcSubSysFA"><span class="reference">PinchDtcSubSysFA</span></a>.<a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalOrCentralNodes"><span class="reference">LocalOrCentralNodes</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressDown"><span class="reference">expressDown</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressUpDown"><span class="reference">expressUpDown</span></a> =&gt; <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PinchDtcSubSysFA"><span class="reference">PinchDtcSubSysFA</span></a>.<a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PinchDtcSubSysFA"><span class="reference">PinchDtcSubSysFA</span></a>.<a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> &lt;=&gt; <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysLoadPowerDT">WinSubSysLoadPowerDT</span><span class="keyword"> : </span><a href="#c0_DeviceTopology"><span class="reference">DeviceTopology</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c1_dn">dn</span><span class="keyword"> -> </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wire">wire</span><span class="keyword"> -> </span><a href="#c0_Wire"><span class="reference">Wire</span></a> *</div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_motorLoadWireConfig">motorLoadWireConfig</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_driveToMotor">driveToMotor</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_lpToMotor">lpToMotor</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_LoadPower"><span class="reference">LoadPower</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_lpToDriver">lpToDriver</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_LoadPower"><span class="reference">LoadPower</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a> &lt;=&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &lt;=&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysDevicePowerDT">WinSubSysDevicePowerDT</span><span class="keyword"> : </span><a href="#c0_DeviceTopology"><span class="reference">DeviceTopology</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c2_dn">dn</span><span class="keyword"> -> </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_wire">wire</span><span class="keyword"> -> </span><a href="#c0_Wire"><span class="reference">Wire</span></a> *</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_devicePower">devicePower</span><span class="keyword"> -> </span><a href="#c0_DevicePowerWire"><span class="reference">DevicePowerWire</span></a> *</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_devicePowerWireInlineToSwitch">devicePowerWireInlineToSwitch</span><span class="keyword"> : </span><a href="#c0_DevicePowerWire"><span class="reference">DevicePowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#c2_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DevicePower"><span class="reference">DevicePower</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c2_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_devicePowerWireInlineToMotor">devicePowerWireInlineToMotor</span><span class="keyword"> : </span><a href="#c0_DevicePowerWire"><span class="reference">DevicePowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#c2_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DevicePower"><span class="reference">DevicePower</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c2_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToMotor"><span class="reference">devicePowerWireInlineToMotor</span></a> &lt;=&gt; <a href="#c2_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToSwitch"><span class="reference">devicePowerWireInlineToSwitch</span></a> &lt;=&gt; <a href="#c2_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_devicePower"><span class="reference">devicePower</span></a> = <a href="#c0_devicePowerWireInlineToMotor"><span class="reference">devicePowerWireInlineToMotor</span></a>, <a href="#c0_devicePowerWireInlineToSwitch"><span class="reference">devicePowerWireInlineToSwitch</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysSwitchDscDT">WinSubSysSwitchDscDT</span><span class="keyword"> : </span><a href="#c0_DeviceTopology"><span class="reference">DeviceTopology</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c3_dn">dn</span><span class="keyword"> -> </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c2_wire">wire</span><span class="keyword"> -> </span><a href="#c0_Wire"><span class="reference">Wire</span></a> *</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_switchDsc">switchDsc</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> in <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>, <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> &#124;&#124; <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WinSubSysBusDT">WinSubSysBusDT</span><span class="keyword"> : </span><a href="#c0_DeviceTopology"><span class="reference">DeviceTopology</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c4_dn">dn</span><span class="keyword"> -> </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_bus">bus</span><span class="keyword"> -> </span><a href="#c0_Bus"><span class="reference">Bus</span></a> ?</div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_busType"><span class="reference">busType</span></a> &lt;=&gt; # <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> &gt; 1 <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_busType">busType</span> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_AllSmart">AllSmart</span><span class="keyword"> : </span><a href="#c0_Bus"><span class="reference">Bus</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 3 <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_connectedFrom"><span class="reference">connectedFrom</span></a> = <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a>, <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>, <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bus"><span class="reference">bus</span></a> = <a href="#Uid not found"><span class="reference">busType</span></a>.<a href="#c0_AllSmart"><span class="reference">AllSmart</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_OnlyLocalSmart">OnlyLocalSmart</span><span class="keyword"> : </span><a href="#c0_Bus"><span class="reference">Bus</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 1 <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_connectedFrom"><span class="reference">connectedFrom</span></a> = <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>, <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bus"><span class="reference">bus</span></a> = <a href="#Uid not found"><span class="reference">busType</span></a>.<a href="#c0_OnlyLocalSmart"><span class="reference">OnlyLocalSmart</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_MotorToBCM">MotorToBCM</span><span class="keyword"> : </span><a href="#c0_Bus"><span class="reference">Bus</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 2 <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_connectedFrom"><span class="reference">connectedFrom</span></a> = <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a>, <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bus"><span class="reference">bus</span></a> = <a href="#Uid not found"><span class="reference">busType</span></a>.<a href="#c0_MotorToBCM"><span class="reference">MotorToBCM</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_SwitchToBCM">SwitchToBCM</span><span class="keyword"> : </span><a href="#c0_Bus"><span class="reference">Bus</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 2 <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_connectedFrom"><span class="reference">connectedFrom</span></a> = <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a>, <a href="#c4_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bus"><span class="reference">bus</span></a> = <a href="#Uid not found"><span class="reference">busType</span></a>.<a href="#c0_SwitchToBCM"><span class="reference">SwitchToBCM</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_busType"><span class="reference">busType</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_bus"><span class="reference">bus</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_PowerWindowSystemFM">PowerWindowSystemFM</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_manualUpDown">manualUpDown</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_express">express</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_expressUp">expressUp</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a> ?
+      <div class="indent">
+      <span class="claferDecl" id="c0_pinchProtection">pinchProtection</span><span class="keyword"> : </span><a href="#c0_Feature"><span class="reference">Feature</span></a> ?</div>
+    </div>
+  </div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_WinSysArch">WinSysArch</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinSysFA">WinSysFA</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DWinSubSysFA">DWinSubSysFA</span><span class="keyword"> : </span><a href="#c0_WinSubSysFA"><span class="reference">WinSubSysFA</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_PWinSubSysFA">PWinSubSysFA</span><span class="keyword"> : </span><a href="#c0_WinSubSysFA"><span class="reference">WinSubSysFA</span></a>
+      <div class="indent">
+      <span class="claferDecl" id="c0_DWinSwitch">DWinSwitch</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a>
+        <div class="indent">
+        <span class="keyword">[</span> <a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_PWinSubSysHW"><span class="reference">PWinSubSysHW</span></a>.<a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a>.<a href="#c2_DWinSwitch"><span class="reference">DWinSwitch</span></a> <span class="keyword">]</span></div>
+      </div>
+      <div class="indent">
+      <span class="claferDecl" id="c0_dWinReq">dWinReq</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+        <div class="indent">
+        <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#Uid not found"><span class="reference">PWinSubSysFA</span></a>.<a href="#c0_DWinSwitch"><span class="reference">DWinSwitch</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#Uid not found"><span class="reference">PWinSubSysFA</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a> <span class="keyword">]</span></div>
+      </div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_BLPWinSubSysFA">BLPWinSubSysFA</span><span class="keyword"> : </span><a href="#c0_WinSubSysFA"><span class="reference">WinSubSysFA</span></a>
+      <div class="indent">
+      <span class="claferDecl" id="c1_DWinSwitch">DWinSwitch</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a>
+        <div class="indent">
+        <span class="keyword">[</span> <a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_BLPWinSubSysHW"><span class="reference">BLPWinSubSysHW</span></a>.<a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a>.<a href="#c3_DWinSwitch"><span class="reference">DWinSwitch</span></a> <span class="keyword">]</span></div>
+      </div>
+      <div class="indent">
+      <span class="claferDecl" id="c1_dWinReq">dWinReq</span><span class="keyword"> : </span><a href="#c0_Command"><span class="reference">Command</span></a>
+        <div class="indent">
+        <span class="keyword">[</span> <a href="#c0_sender"><span class="reference">sender</span></a> = <a href="#Uid not found"><span class="reference">BLPWinSubSysFA</span></a>.<a href="#c1_DWinSwitch"><span class="reference">DWinSwitch</span></a> &amp;&amp; <a href="#c0_receiver"><span class="reference">receiver</span></a> = <a href="#Uid not found"><span class="reference">BLPWinSubSysFA</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a> <span class="keyword">]</span></div>
+      </div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a> =&gt; <a href="#c0_DWinSubSysFA"><span class="reference">DWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_noExpress"><span class="reference">noExpress</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_DWinSubSysFA"><span class="reference">DWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressDown"><span class="reference">expressDown</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_DWinSubSysFA"><span class="reference">DWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressUpDown"><span class="reference">expressUpDown</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a> =&gt; <a href="#c0_PWinSubSysFA"><span class="reference">PWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_noExpress"><span class="reference">noExpress</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_PWinSubSysFA"><span class="reference">PWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressDown"><span class="reference">expressDown</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_PWinSubSysFA"><span class="reference">PWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressUpDown"><span class="reference">expressUpDown</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a> =&gt; <a href="#c0_BLPWinSubSysFA"><span class="reference">BLPWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_noExpress"><span class="reference">noExpress</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_BLPWinSubSysFA"><span class="reference">BLPWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressDown"><span class="reference">expressDown</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PowerWindowSystemFM"><span class="reference">PowerWindowSystemFM</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_BLPWinSubSysFA"><span class="reference">BLPWinSubSysFA</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_expressUpDown"><span class="reference">expressUpDown</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinSysDpl">WinSysDpl</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DWinSubSysDpl">DWinSubSysDpl</span><span class="keyword"> : </span><a href="#c0_WinSubSysDpl"><span class="reference">WinSubSysDpl</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a> = <a href="#Uid not found"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysFA"><span class="reference">WinSysFA</span></a>.<a href="#c0_DWinSubSysFA"><span class="reference">DWinSubSysFA</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dn"><span class="reference">dn</span></a> = <a href="#Uid not found"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysHW"><span class="reference">WinSysHW</span></a>.<a href="#c0_DWinHW"><span class="reference">DWinHW</span></a>.<a href="#c0_DWinSubSysDN"><span class="reference">DWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_PWinSubSysDpl">PWinSubSysDpl</span><span class="keyword"> : </span><a href="#c0_WinSubSysDpl"><span class="reference">WinSubSysDpl</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a> = <a href="#Uid not found"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysFA"><span class="reference">WinSysFA</span></a>.<a href="#c0_PWinSubSysFA"><span class="reference">PWinSubSysFA</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dn"><span class="reference">dn</span></a> = <a href="#Uid not found"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysHW"><span class="reference">WinSysHW</span></a>.<a href="#c0_PWinHW"><span class="reference">PWinHW</span></a>.<a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>, <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_BLPWinSubSysDpl">BLPWinSubSysDpl</span><span class="keyword"> : </span><a href="#c0_WinSubSysDpl"><span class="reference">WinSubSysDpl</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a> = <a href="#Uid not found"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysFA"><span class="reference">WinSysFA</span></a>.<a href="#c0_BLPWinSubSysFA"><span class="reference">BLPWinSubSysFA</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dn"><span class="reference">dn</span></a> = <a href="#Uid not found"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysHW"><span class="reference">WinSysHW</span></a>.<a href="#c0_BLPWinHW"><span class="reference">BLPWinHW</span></a>.<a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinRqArbiter"><span class="reference">WinRqArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> in <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a>, <a href="#c0_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinSysHW">WinSysHW</span><span class="keyword"> : </span><a href="#c0_Hardware"><span class="reference">Hardware</span></a>
+    <div class="indent">
+    <span class="claferDecl" id="c1_BCM">BCM</span><span class="keyword"> : </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DWinHW">DWinHW</span><span class="keyword"> -> </span><a href="#c0_DWinSubSysHW"><span class="reference">DWinSubSysHW</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_PWinHW">PWinHW</span><span class="keyword"> -> </span><a href="#c0_PWinSubSysHW"><span class="reference">PWinSubSysHW</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_BLPWinHW">BLPWinHW</span><span class="keyword"> -> </span><a href="#c0_BLPWinSubSysHW"><span class="reference">BLPWinSubSysHW</span></a></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_DWinHW"><span class="reference">DWinHW</span></a> = <a href="#c0_DWinSubSysHW"><span class="reference">DWinSubSysHW</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PWinHW"><span class="reference">PWinHW</span></a> = <a href="#c0_PWinSubSysHW"><span class="reference">PWinSubSysHW</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_BLPWinHW"><span class="reference">BLPWinHW</span></a> = <a href="#c0_BLPWinSubSysHW"><span class="reference">BLPWinSubSysHW</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_DWinSubSysHW"><span class="reference">DWinSubSysHW</span></a>.<a href="#c2_BCM"><span class="reference">BCM</span></a> = <a href="#c1_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_PWinSubSysHW"><span class="reference">PWinSubSysHW</span></a>.<a href="#c3_BCM"><span class="reference">BCM</span></a> = <a href="#c1_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_BLPWinSubSysHW"><span class="reference">BLPWinSubSysHW</span></a>.<a href="#c4_BCM"><span class="reference">BCM</span></a> = <a href="#c1_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_smartDevices">smartDevices</span><span class="keyword"> -> </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a> *</div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_smartDevices"><span class="reference">smartDevices</span></a> = <a href="#c0_DWinHW"><span class="reference">DWinHW</span></a>.<a href="#c0_DWinSubSysDN"><span class="reference">DWinSubSysDN</span></a>.<a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a>.<a href="#ref"><span class="reference">ref</span></a>++<a href="#c0_PWinHW"><span class="reference">PWinHW</span></a>.<a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a>.<a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a>.<a href="#ref"><span class="reference">ref</span></a>++<a href="#c0_BLPWinHW"><span class="reference">BLPWinHW</span></a>.<a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a>.<a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a>.<a href="#ref"><span class="reference">ref</span></a>++<a href="#c1_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_totalConnectionLength">totalConnectionLength</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> = <a href="#c0_DWinHW"><span class="reference">DWinHW</span></a>.<a href="#c1_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> + <a href="#c0_PWinHW"><span class="reference">PWinHW</span></a>.<a href="#c2_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> + <a href="#c0_BLPWinHW"><span class="reference">BLPWinHW</span></a>.<a href="#c3_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_totalConnectionMass">totalConnectionMass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> = <a href="#c0_DWinHW"><span class="reference">DWinHW</span></a>.<a href="#c1_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> + <a href="#c0_PWinHW"><span class="reference">PWinHW</span></a>.<a href="#c2_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> + <a href="#c0_BLPWinHW"><span class="reference">BLPWinHW</span></a>.<a href="#c3_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_DWinSubSysHW">DWinSubSysHW</span>
+  <div class="indent">
+  <span class="claferDecl" id="c2_BCM">BCM</span><span class="keyword"> -> </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DWinSubSysDN">DWinSubSysDN</span><span class="keyword"> : </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">some</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_Serial"><span class="reference">Serial</span></a>, <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteOut"><span class="reference">DiscreteOut</span></a>, <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerOut"><span class="reference">DrivePowerOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> # <a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> &gt; 0 &lt;=&gt; <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DevicePower"><span class="reference">DevicePower</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#parent"><span class="reference">parent</span></a>.<a href="#c2_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DWinSubSysLoadPowerDT">DWinSubSysLoadPowerDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysLoadPowerDT"><span class="reference">WinSubSysLoadPowerDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a> = <a href="#c0_DWinSubSysDN"><span class="reference">DWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_lpToSwitch">lpToSwitch</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_LoadPower"><span class="reference">LoadPower</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_switchToInline">switchToInline</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerOut"><span class="reference">DrivePowerOut</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_lpToSwitch"><span class="reference">lpToSwitch</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_lpToSwitch"><span class="reference">lpToSwitch</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchToInline"><span class="reference">switchToInline</span></a> &lt;=&gt; <a href="#this"><span class="reference">this</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerOut"><span class="reference">DrivePowerOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchToInline"><span class="reference">switchToInline</span></a> =&gt; <a href="#c0_lpToSwitch"><span class="reference">lpToSwitch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_wire"><span class="reference">wire</span></a> = <a href="#c0_lpToSwitch"><span class="reference">lpToSwitch</span></a>, <a href="#c0_switchToInline"><span class="reference">switchToInline</span></a>, <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>, <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a>, <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 85 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DWinSubSysDevicePowerDT">DWinSubSysDevicePowerDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysDevicePowerDT"><span class="reference">WinSubSysDevicePowerDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c2_dn"><span class="reference">dn</span></a> = <a href="#c0_DWinSubSysDN"><span class="reference">DWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_wire"><span class="reference">wire</span></a> = <a href="#c0_devicePower"><span class="reference">devicePower</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToSwitch"><span class="reference">devicePowerWireInlineToSwitch</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToMotor"><span class="reference">devicePowerWireInlineToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DWinSubSysSwitchDscDT">DWinSubSysSwitchDscDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysSwitchDscDT"><span class="reference">WinSubSysSwitchDscDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c3_dn"><span class="reference">dn</span></a> = <a href="#c0_DWinSubSysDN"><span class="reference">DWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_passengerDiscrete">passengerDiscrete</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteOut"><span class="reference">DiscreteOut</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_passengerDiscrete"><span class="reference">passengerDiscrete</span></a> &lt;=&gt; <a href="#this"><span class="reference">this</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteOut"><span class="reference">DiscreteOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c2_wire"><span class="reference">wire</span></a> = <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>, <a href="#c0_passengerDiscrete"><span class="reference">passengerDiscrete</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 85 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> =&gt; <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DWinSubSysBusDT">DWinSubSysBusDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysBusDT"><span class="reference">WinSubSysBusDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a> = <a href="#c0_DWinSubSysDN"><span class="reference">DWinSubSysDN</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_totalConnectionLength">totalConnectionLength</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c1_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> = sum <a href="#c0_DWinSubSysLoadPowerDT"><span class="reference">DWinSubSysLoadPowerDT</span></a>.<a href="#c0_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + sum <a href="#c0_DWinSubSysSwitchDscDT"><span class="reference">DWinSubSysSwitchDscDT</span></a>.<a href="#c2_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + sum <a href="#c0_DWinSubSysDevicePowerDT"><span class="reference">DWinSubSysDevicePowerDT</span></a>.<a href="#c1_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + <a href="#c0_DWinSubSysBusDT"><span class="reference">DWinSubSysBusDT</span></a>.<a href="#c0_bus"><span class="reference">bus</span></a>.<a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_totalConnectionMass">totalConnectionMass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c1_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> = sum <a href="#c0_DWinSubSysLoadPowerDT"><span class="reference">DWinSubSysLoadPowerDT</span></a>.<a href="#c0_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + sum <a href="#c0_DWinSubSysSwitchDscDT"><span class="reference">DWinSubSysSwitchDscDT</span></a>.<a href="#c2_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + sum <a href="#c0_DWinSubSysDevicePowerDT"><span class="reference">DWinSubSysDevicePowerDT</span></a>.<a href="#c1_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + <a href="#c0_DWinSubSysBusDT"><span class="reference">DWinSubSysBusDT</span></a>.<a href="#c0_bus"><span class="reference">bus</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_PWinSubSysHW">PWinSubSysHW</span>
+  <div class="indent">
+  <span class="claferDecl" id="c3_BCM">BCM</span><span class="keyword"> -> </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PWinSubSysDN">PWinSubSysDN</span><span class="keyword"> : </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a>
+    <div class="indent">
+    <span class="claferDecl" id="c2_DWinSwitch">DWinSwitch</span><span class="keyword"> : </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteOut"><span class="reference">DiscreteOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerOut"><span class="reference">DrivePowerOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">some</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_Serial"><span class="reference">Serial</span></a>, <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a>, <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> # <a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> &gt; 0 &lt;=&gt; <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DevicePower"><span class="reference">DevicePower</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PWinSubSysLoadPowerDT">PWinSubSysLoadPowerDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysLoadPowerDT"><span class="reference">WinSubSysLoadPowerDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a> = <a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_drivePowerIn">drivePowerIn</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_wire"><span class="reference">wire</span></a> = <a href="#c0_drivePowerIn"><span class="reference">drivePowerIn</span></a>, <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>, <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a>, <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 175 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 130 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> &lt;=&gt; <a href="#c0_drivePowerIn"><span class="reference">drivePowerIn</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PWinSubSysDevicePowerDT">PWinSubSysDevicePowerDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysDevicePowerDT"><span class="reference">WinSubSysDevicePowerDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c2_dn"><span class="reference">dn</span></a> = <a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_wire"><span class="reference">wire</span></a> = <a href="#c0_devicePower"><span class="reference">devicePower</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToSwitch"><span class="reference">devicePowerWireInlineToSwitch</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToMotor"><span class="reference">devicePowerWireInlineToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PWinSubSysSwitchDscDT">PWinSubSysSwitchDscDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysSwitchDscDT"><span class="reference">WinSubSysSwitchDscDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c3_dn"><span class="reference">dn</span></a> = <a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_discreteIn">discreteIn</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> in <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> =&gt; <a href="#c0_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_discreteIn"><span class="reference">discreteIn</span></a> &lt;=&gt; <a href="#this"><span class="reference">this</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c2_wire"><span class="reference">wire</span></a> = <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>, <a href="#c0_discreteIn"><span class="reference">discreteIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 175 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> =&gt; <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PWinSubSysBusDT">PWinSubSysBusDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysBusDT"><span class="reference">WinSubSysBusDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a> = <a href="#c0_PWinSubSysDN"><span class="reference">PWinSubSysDN</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c2_totalConnectionLength">totalConnectionLength</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c2_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> = sum <a href="#c0_PWinSubSysLoadPowerDT"><span class="reference">PWinSubSysLoadPowerDT</span></a>.<a href="#c0_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + sum <a href="#c0_PWinSubSysSwitchDscDT"><span class="reference">PWinSubSysSwitchDscDT</span></a>.<a href="#c2_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + sum <a href="#c0_PWinSubSysDevicePowerDT"><span class="reference">PWinSubSysDevicePowerDT</span></a>.<a href="#c1_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + <a href="#c0_PWinSubSysBusDT"><span class="reference">PWinSubSysBusDT</span></a>.<a href="#c0_bus"><span class="reference">bus</span></a>.<a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c2_totalConnectionMass">totalConnectionMass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c2_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> = sum <a href="#c0_PWinSubSysLoadPowerDT"><span class="reference">PWinSubSysLoadPowerDT</span></a>.<a href="#c0_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + sum <a href="#c0_PWinSubSysSwitchDscDT"><span class="reference">PWinSubSysSwitchDscDT</span></a>.<a href="#c2_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + sum <a href="#c0_PWinSubSysDevicePowerDT"><span class="reference">PWinSubSysDevicePowerDT</span></a>.<a href="#c1_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + <a href="#c0_PWinSubSysBusDT"><span class="reference">PWinSubSysBusDT</span></a>.<a href="#c0_bus"><span class="reference">bus</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_BLPWinSubSysHW">BLPWinSubSysHW</span>
+  <div class="indent">
+  <span class="claferDecl" id="c4_BCM">BCM</span><span class="keyword"> -> </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BLPWinSubSysDN">BLPWinSubSysDN</span><span class="keyword"> : </span><a href="#c0_WinSubSysDN"><span class="reference">WinSubSysDN</span></a>
+    <div class="indent">
+    <span class="claferDecl" id="c3_DWinSwitch">DWinSwitch</span><span class="keyword"> : </span><a href="#c0_DeviceNode"><span class="reference">DeviceNode</span></a></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteOut"><span class="reference">DiscreteOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerOut"><span class="reference">DrivePowerOut</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">some</span> <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_Serial"><span class="reference">Serial</span></a>, <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a>, <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> # <a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> &gt; 0 &lt;=&gt; <a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DevicePower"><span class="reference">DevicePower</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c4_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BLPWinSubSysLoadPowerDT">BLPWinSubSysLoadPowerDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysLoadPowerDT"><span class="reference">WinSubSysLoadPowerDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a> = <a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c1_drivePowerIn">drivePowerIn</span><span class="keyword"> : </span><a href="#c0_LoadWire"><span class="reference">LoadWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_wire"><span class="reference">wire</span></a> = <a href="#c1_drivePowerIn"><span class="reference">drivePowerIn</span></a>, <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>, <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a>, <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_lpToMotor"><span class="reference">lpToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 175 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_motorLoadWireConfig"><span class="reference">motorLoadWireConfig</span></a>.<a href="#c0_driveToMotor"><span class="reference">driveToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 130 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a>.<a href="#c0_Driver"><span class="reference">Driver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c0_lpToDriver"><span class="reference">lpToDriver</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a>.<a href="#c1_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DrivePowerIn"><span class="reference">DrivePowerIn</span></a> &lt;=&gt; <a href="#c1_drivePowerIn"><span class="reference">drivePowerIn</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BLPWinSubSysDevicePowerDT">BLPWinSubSysDevicePowerDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysDevicePowerDT"><span class="reference">WinSubSysDevicePowerDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c2_dn"><span class="reference">dn</span></a> = <a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_wire"><span class="reference">wire</span></a> = <a href="#c0_devicePower"><span class="reference">devicePower</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToSwitch"><span class="reference">devicePowerWireInlineToSwitch</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_devicePowerWireInlineToMotor"><span class="reference">devicePowerWireInlineToMotor</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BLPWinSubSysSwitchDscDT">BLPWinSubSysSwitchDscDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysSwitchDscDT"><span class="reference">WinSubSysSwitchDscDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c3_dn"><span class="reference">dn</span></a> = <a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c1_discreteIn">discreteIn</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_source"><span class="reference">source</span></a> = <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_sink"><span class="reference">sink</span></a> in <a href="#parent"><span class="reference">parent</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_LocalSmartNodes"><span class="reference">LocalSmartNodes</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_WinSwitch"><span class="reference">WinSwitch</span></a> =&gt; <a href="#c1_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> =&gt; <a href="#c1_discreteIn"><span class="reference">discreteIn</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 45 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_discreteIn"><span class="reference">discreteIn</span></a> &lt;=&gt; <a href="#this"><span class="reference">this</span></a>.<a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_DoorInline"><span class="reference">DoorInline</span></a>.<a href="#c0_DiscreteIn"><span class="reference">DiscreteIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c2_wire"><span class="reference">wire</span></a> = <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>, <a href="#c1_discreteIn"><span class="reference">discreteIn</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 175 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_sink"><span class="reference">sink</span></a> = <a href="#c3_dn"><span class="reference">dn</span></a>.<a href="#c1_WinMotor"><span class="reference">WinMotor</span></a> =&gt; <a href="#c0_switchDsc"><span class="reference">switchDsc</span></a>.<a href="#c0_length"><span class="reference">length</span></a> = 40 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BLPWinSubSysBusDT">BLPWinSubSysBusDT</span><span class="keyword"> : </span><a href="#c0_WinSubSysBusDT"><span class="reference">WinSubSysBusDT</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c4_dn"><span class="reference">dn</span></a> = <a href="#c0_BLPWinSubSysDN"><span class="reference">BLPWinSubSysDN</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c3_totalConnectionLength">totalConnectionLength</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c3_totalConnectionLength"><span class="reference">totalConnectionLength</span></a> = sum <a href="#c0_BLPWinSubSysLoadPowerDT"><span class="reference">BLPWinSubSysLoadPowerDT</span></a>.<a href="#c0_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + sum <a href="#c0_BLPWinSubSysSwitchDscDT"><span class="reference">BLPWinSubSysSwitchDscDT</span></a>.<a href="#c2_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + sum <a href="#c0_BLPWinSubSysDevicePowerDT"><span class="reference">BLPWinSubSysDevicePowerDT</span></a>.<a href="#c1_wire"><span class="reference">wire</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + <a href="#c0_BLPWinSubSysBusDT"><span class="reference">BLPWinSubSysBusDT</span></a>.<a href="#c0_bus"><span class="reference">bus</span></a>.<a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c3_totalConnectionMass">totalConnectionMass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c3_totalConnectionMass"><span class="reference">totalConnectionMass</span></a> = sum <a href="#c0_BLPWinSubSysLoadPowerDT"><span class="reference">BLPWinSubSysLoadPowerDT</span></a>.<a href="#c0_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + sum <a href="#c0_BLPWinSubSysSwitchDscDT"><span class="reference">BLPWinSubSysSwitchDscDT</span></a>.<a href="#c2_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + sum <a href="#c0_BLPWinSubSysDevicePowerDT"><span class="reference">BLPWinSubSysDevicePowerDT</span></a>.<a href="#c1_wire"><span class="reference">wire</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + <a href="#c0_BLPWinSubSysBusDT"><span class="reference">BLPWinSubSysBusDT</span></a>.<a href="#c0_bus"><span class="reference">bus</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+&lt;&lt;min <a href="#c0_WinSysArch"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysHW"><span class="reference">WinSysHW</span></a>.<a href="#c0_totalConnectionLength"><span class="reference">totalConnectionLength</span></a>&gt;&gt;</div>
+
+
+<div>
+&lt;&lt;min <a href="#c0_WinSysArch"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysHW"><span class="reference">WinSysHW</span></a>.<a href="#c0_totalConnectionMass"><span class="reference">totalConnectionMass</span></a>&gt;&gt;</div>
+
+
+<div>
+&lt;&lt;min # <a href="#c0_WinSysArch"><span class="reference">WinSysArch</span></a>.<a href="#c0_WinSysHW"><span class="reference">WinSysHW</span></a>.<a href="#c0_smartDevices"><span class="reference">smartDevices</span></a>&gt;&gt;</div>
+
+</body>
+</html>

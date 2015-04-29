@@ -1,0 +1,21 @@
+// Playground
+
+abstract Distance : integer
+	[Distance > 0]
+
+dist1 : Distance = 1
+dist2 : Distance = 2
+dist3 : Distance = 2
+
+temp1 -> Distance
+temp2 -> Distance
+temp3 -> Distance
+[temp1 = dist1]
+[temp2 = dist2]
+[temp3 = dist3]
+
+myDistance ->> integer
+[myDistance = temp1.ref + temp2.ref]
+
+myDistance1 ->> integer
+[myDistance1 = temp1.ref + temp2.ref + temp3.ref]

@@ -1,0 +1,360 @@
+// Power Window Clafer Model
+// Based off of the slides developed by Krzysztof Czarnecki. Oringal Power Window
+// Clafer done by Alexander Mushrukin.
+//
+// Model entered by: Jordan Ross
+//
+// Date: 2/3/15
+
+// ------------------ ABSTRACT CLAFERS ------------------------------------------//
+abstract SystemArchitecture
+abstract FunctionalAnalysis
+abstract FunctionalDesignArchitecture
+abstract Hardware
+abstract Device
+abstract Feature
+abstract Deployment
+abstract DeviceTopology
+
+// *************** Abstract Clafers for Functional Analysis *********************//
+// I am defining this abstract Clafer because we have 2 functional analysis
+// components (AnalysisFunction & FunctionalDevice) which need to be deployed to
+// a device node.
+abstract FunctionalAnalysisComponent
+    deployedTo -> DeviceNode
+        [parent in this.deployedFrom]
+
+abstract AnalysisFunction : FunctionalAnalysisComponent
+
+abstract FunctionalDevice : FunctionalAnalysisComponent
+
+abstract Command
+    sender -> FunctionalAnalysisComponent
+    receiver -> FunctionalAnalysisComponent
+// *******************************************************************************//
+
+
+abstract DeviceNode
+    deployedFrom -> FunctionalAnalysisComponent *
+        [this.deployedTo = parent]
+    smart ?
+
+// I define electrical unit as a special device node. It is one that is never smart and
+// is used for providing/relaying power,signals, etc.
+abstract ElectricalUnit : DeviceNode 
+    [no smart]
+    [no deployedFrom]
+
+abstract Connection
+    source -> DeviceNode
+    sink -> DeviceNode
+abstract Wire : Connection
+abstract LoadWire : Wire
+abstract DiscreteWire : Wire
+abstract DevicePowerWire : Wire
+
+// Define a ECU which is a special type of device node
+abstract ECU : DeviceNode
+    [smart]
+
+// Define an Electric Center which is a special type of device node (similiar to ElecticalUnit)
+abstract ElectricCenter : DeviceNode
+    [no smart]
+    [no deployedFrom]
+
+
+// Functional Architecture Analysis (Generic Window)
+abstract WinSubSysFA : FunctionalAnalysis
+    // Lets first define the components that we will have in our Functional Analysis Architecture
+    WinSwitch : FunctionalDevice
+    WinRqArbiter : AnalysisFunction
+    WinController : AnalysisFunction
+        xor config
+            noExpress : Feature
+            expressDown : Feature
+            expressUpDown : Feature
+    WinMotor : FunctionalDevice
+    CurrentSensor : FunctionalDevice
+
+    // Now lets define our commands
+    localWinReq : Command
+        [sender = WinSwitch && receiver = WinRqArbiter]
+    winReq : Command
+        [sender = WinRqArbiter && receiver = WinController]
+    winCmd : Command
+        [sender = WinController && receiver = WinMotor]
+    current : Command
+        [sender = CurrentSensor && receiver = WinController]
+
+    // Let us define a sub system functional architecture for our pinch detection as follows:
+    PinchDtcSubSysFA : FunctionalAnalysis ?
+        // Lets define the components that we have in our pinch detection FA
+        PinchDetection : AnalysisFunction
+        PositionSensor : FunctionalDevice
+        // Also define any commands that we have.
+        object : Command
+            [sender = PinchDetection && receiver = WinController]
+        position : Command
+            [sender = PositionSensor && receiver = PinchDetection]
+
+    // We need a constraint to define when we have our pinch detection sub system FA
+    [PinchDtcSubSysFA <=> pinchProtection] //TODO: This might not be the best place for this constraint.
+
+// Device Nodes (Generic Window)
+abstract WinSubSysDN : FunctionalDesignArchitecture
+    // We define our components here for the device node architecture
+    WinSwitch : DeviceNode
+    BCM : ECU ? //Assumption: Here we are assuming that the BCM belongs to the window sub sys when it actually
+                        // should just reference it. We actuall instantiate 2 BCMs
+    WinMotor : DeviceNode
+        Driver -> DeviceNode // The motor needs a DeviceNode to command the motor to operate
+    
+    //TODO: We need redefinition/nested inheritance to get rid of the in and out's
+    // The door inline represents the plug/socket interface between two wiring harnesses.
+    DoorInline : ElectricalUnit
+        LoadPower : ElectricalUnit //TODO: Maybe we model this as a plug and socket?
+        DevicePower : ElectricalUnit ?
+        Serial : ElectricalUnit ?
+        DiscreteOut : ElectricalUnit ?
+        DrivePowerOut : ElectricalUnit ?
+        DiscreteIn : ElectricalUnit ?
+        DrivePowerIn : ElectricalUnit ?
+    
+    // Constrain the WinMotor to indicate that it is smart if it is its own Driver (i.e. the
+    // motor has processing power to command the motor.)
+    [WinMotor.Driver = WinMotor <=> WinMotor.smart]
+
+    // Now we define some sets of components
+    LocalNodes -> DeviceNode *
+    LocalSmartNodes -> DeviceNode *
+    LocalOrCentralNodes -> DeviceNode *
+
+    // Define some constraints on the sets
+    [LocalNodes = (WinSwitch, WinMotor)]
+    [LocalOrCentralNodes = (WinSwitch, WinMotor, BCM)]
+
+    // Populate the LocalSmartNodes set with all the LocalNodes who are smart
+    [all n : LocalNodes | (n in LocalSmartNodes) <=> n.smart]
+    // Remove all nodes in LocalSmartNodes that don't belong to LocalNodes
+    [no n : LocalSmartNodes | !(n in LocalNodes)]
+
+    // If we have LocalSmartNodes then we need DevicePower
+    [(#LocalSmartNodes > 0) <=> DoorInline.DevicePower]
+
+    //TODO: Missing constraint: MotorDriver in LocalOrCentralNodes
+    [WinMotor.Driver in LocalOrCentralNodes]
+
+
+// Functional Design - Deployment (Generic Window)
+abstract WinSubSysDpl : Deployment //TODO: Cross-reference these constraints with Alex's Model
+    // Define references to the functional analysis and device node sub systems
+    fa -> WinSubSysFA
+    dn -> WinSubSysDN
+
+    // Containts on deployment
+    [fa.WinSwitch.deployedTo = dn.WinSwitch]
+    [fa.WinController.deployedTo in dn.LocalOrCentralNodes]
+    [fa.WinController.config.expressDown => fa.WinController.deployedTo.smart]
+    [fa.WinController.config.expressUpDown => dn.WinMotor.Driver.smart &&
+        fa.WinController.deployedTo = dn.WinMotor.Driver &&
+        fa.PinchDtcSubSysFA.PinchDetection.deployedTo.smart &&
+        fa.PinchDtcSubSysFA.PositionSensor.deployedTo = dn.WinMotor]
+
+    [dn.WinMotor.Driver.smart => fa.CurrentSensor.deployedTo = dn.WinMotor.Driver]
+    [no dn.WinMotor.Driver.smart => no dn.BCM && 
+        fa.WinController.deployedTo = fa.CurrentSensor.deployedTo]
+    [fa.WinMotor.deployedTo = dn.WinMotor]
+
+// Device Topology - Load Power (Generic Window)
+abstract WinSubSysLoadPowerDT : DeviceTopology
+    // Define a reference a to the window sub system device node
+    dn -> WinSubSysDN
+
+    // We now define the load wires between the relevant device nodes.
+    // We can either have load power to the motor directly or from the motor driver
+    xor motorLoadWireConfig
+        driveToMotor : LoadWire
+            [source = dn.WinMotor.Driver.ref]
+            [sink = dn.WinMotor]
+        lpToMotor : LoadWire
+            [source = dn.DoorInline.LoadPower]
+            [sink = dn.WinMotor]
+
+    // If we have drive to motor then the drive must be supplied the load power
+    lpToDriver : LoadWire ?
+        [source = dn.DoorInline.LoadPower]
+        [sink = dn.WinMotor.Driver.ref]
+    [lpToDriver <=> driveToMotor]
+
+// Device Topology - Device Power (Generic Window)
+abstract WinSubSysDevicePowerDT : DeviceTopology
+    // Define a reference to the window sub system device node
+    dn -> WinSubSysDN
+
+    // Now we should create a set of device power wires that connect the device power from the
+    // door inline to each of the local smart nodes
+    //TODO: Talk to Michal about how else we could write this constraint
+    devicePower : DevicePowerWire * // This takes forever to find instances
+        [source = dn.DoorInline.DevicePower]
+    [#devicePower = #dn.LocalSmartNodes]
+    [all dp : devicePower | (dp.sink in LocalSmartNodes)]
+
+// Device Topology - Discrete Wires (Generic Window)
+abstract WinSubSysSwitchDscDT : DeviceTopology
+    // Define a reference to the window sub system device node
+    dn -> WinSubSysDN
+
+    // Define the discrete wire originating from the window switch
+    switchDsc : DiscreteWire ?
+        [source = dn.WinSwitch]
+        [sink in (dn.WinMotor, dn.BCM)]
+    [dn.WinMotor.Driver = dn.WinSwitch => no switchDsc]
+    [switchDsc.sink = dn.BCM => (dn.WinMotor.Driver = dn.BCM || dn.WinMotor.smart)]
+
+
+// ------------------------------ CONCRETE CLAFERS -------------------------------------------//
+
+// Technical Feature Model
+PowerWindowSystemFM
+    manualUpDown // Feature for basic control of power window (manual denotes that 
+                 // it is not express)
+    express ? // Feature for express movement of power window (i.e. move switch into
+              // a special position and window will continue moving even when switch
+              // has been released.)
+        expressUp ?  // Refined feature of express which denotes the window moving up
+                     // even after switch is released.
+            pinchProtection ? // A feature that is only present when expressUp is present
+                              // which detects if an obstacle is in the path of the window
+                              // (i.e. a finger)
+
+WinSysArch
+    WinSysFA
+        // Functional Analysis Architecture (Driver Window)
+        DWinSubSysFA : WinSubSysFA
+
+        // Functional Analysis Architecture (Passenger Window)
+        PWinSubSysFA : WinSubSysFA
+            // For the passenger window we have an extra device and command to denote the ability
+            // to control the passenger window from the driver side switches
+            DWinSwitch : FunctionalDevice
+            dWinReq : Command
+                [sender = DWinSwitch && receiver = PWinSubSysFA.WinRqArbiter]
+
+    WinSysDpl
+        DWinSubSysDpl : WinSubSysDpl
+            [fa = WinSysArch.WinSysFA.DWinSubSysFA]
+            [dn = WinSysArch.WinSysHW.DWinHW.DWinSubSysDN]
+
+        PWinSubSysDpl : WinSubSysDpl
+            [fa = WinSysArch.WinSysFA.PWinSubSysFA]
+            [dn = WinSysArch.WinSysHW.PWinHW.PWinSubSysDN]
+
+            [fa.WinController.deployedTo = dn.WinSwitch => fa.WinRqArbiter.deployedTo = dn.WinSwitch]
+            [fa.WinController.deployedTo = dn.BCM => fa.WinRqArbiter.deployedTo in (dn.WinSwitch, dn.BCM)]
+
+    WinSysHW : Hardware
+        //TODO: ECU needs to be defined, BCM and ElectricCenter need to be moved into some other
+        //root level Clafer that represents the rest of the car.
+        BCM : ECU
+        EC : ElectricCenter
+
+        // Define references to our two (or possibly more) hardware subsystems
+        DWinHW -> DWinSubSysHW
+        PWinHW -> PWinSubSysHW
+
+        [DWinHW = DWinSubSysHW]
+        [PWinHW = PWinSubSysHW]
+    
+
+DWinSubSysHW
+    BCM -> ECU //TODO: Does this need to be optional?
+    EC -> ElectricCenter
+
+    DWinSubSysDN : WinSubSysDN
+        // Constraint to mimic "mux" on slide 8
+        [DoorInline.DiscreteOut <=> no DoorInline.DrivePowerOut] //TODO: This does not seem necessary
+        [no DoorInline.DiscreteIn]
+        [no DoorInline.DrivePowerIn]
+        [some DoorInline.Serial, DoorInline.DiscreteOut, DoorInline.DrivePowerOut]
+        [(#LocalSmartNodes > 0) <=> DoorInline.DevicePower]
+
+        // Connect the BCM
+        [BCM = parent.BCM]
+
+    DWinSubSysLoadPowerDT : WinSubSysLoadPowerDT
+        [dn = DWinSubSysDN]
+
+        // Define a new wire that provides load power to the window switch
+        lpToSwitch : LoadWire
+            [source = parent.dn.DoorInline.LoadPower]
+            [sink = parent.dn.WinSwitch]
+        
+        // Define another wire that provides load power from the switch to the DrivePowerOut in
+        // the door inline
+        switchToInline : LoadWire
+            [source = parent.dn.WinSwitch]
+            [sink = parent.dn.DoorInline.DrivePowerOut]
+
+        // Waiting for clarification on lpToDrive clafer
+        // set of constraints to mimic xor between lpToSwitch and lpToDriver
+        [lpToSwitch => no lpToDriver]
+        [no lpToSwitch => lpToDriver]
+
+        // We can only have switchToInline if we have DiverPowerOut and we
+        // are configure to have the lpToSwitch wire.
+        [switchToInline <=> this.dn.DoorInline.DrivePowerOut]
+        [switchToInline => lpToSwitch]
+
+    DWinSubSysDevicePowerDT : WinSubSysDevicePowerDT
+        [dn = DWinSubSysDN]
+
+    DWinSubSysSwitchDscDT : WinSubSysSwitchDscDT
+        [dn = DWinSubSysDN]
+
+        passengerDiscrete : DiscreteWire ?
+            [source = parent.dn.WinSwitch]
+            [sink = parent.dn.DoorInline.DiscreteOut]
+
+        [passengerDiscrete <=> this.dn.DoorInline.DiscreteOut]
+
+PWinSubSysHW
+    BCM -> ECU //TODO: Does this need to be optional?
+    EC -> ElectricCenter
+
+    PWinSubSysDN : WinSubSysDN
+        DWinSwitch -> DeviceNode
+        // Constraint to mimic "mux" on slide 9
+        [DoorInline.DiscreteIn <=> no DoorInline.DrivePowerIn] //TODO: This does not seem necessary
+        [no DoorInline.DiscreteOut]
+        [no DoorInline.DrivePowerOut]
+        [some DoorInline.Serial, DoorInline.DiscreteIn, DoorInline.DrivePowerIn]
+        [(#LocalSmartNodes > 0) <=> DoorInline.DevicePower]
+
+        // Connect the BCM
+        [BCM = parent.BCM]
+        // Connect the DWinSwitch to the driver win switch
+        [DWinSwitch = DWinSubSysHW.DWinSubSysDN.WinSwitch] //TODO: Isn't this connecting to drivers switch to control his window?
+
+    PWinSubSysLowerPowerDT : WinSubSysLoadPowerDT
+        [dn = PWinSubSysDN]
+
+        drivePowerIn : LoadWire ?
+            [source = parent.dn.DoorInline.DrivePowerIn]
+            [sink = parent.dn.WinSwitch]
+
+        //TODO: Are we missing any constraints?
+        [this.dn.DoorInline.DrivePowerIn <=> drivePowerIn]
+
+    PWinSubSysDevicePowerDT : WinSubSysDevicePowerDT
+        [dn = PWinSubSysDN]
+
+    PWinSubSysSwitchDscDT : WinSubSysSwitchDscDT
+        [dn = PWinSubSysDN]
+
+        discreteIn : DiscreteWire ?
+            [source = parent.dn.DoorInline.DiscreteIn]
+            [sink in (parent.dn.LocalSmartNodes)]
+
+        [discreteIn <=> this.dn.DoorInline.DiscreteIn]
+
+

@@ -1,0 +1,64 @@
+Things missing from new PW model
+================================
+- otherRemoteControl in the feature model (PWSubsystemConfig)
+- AnalogWire
+- OtherRemoteArbiter
+- Alex's model has a connection from the current sensor to the pinch detection
+- Alex's model has a connection from the position sensor to the win controller
+- There are no constraints on the win controller config to link it to the feature model
+- We do not have a bus
+- We do not hava a DoorModule ECU
+- We do not have a PowerFuse
+- Wire lengths
+- Position wire
+	+ Does our PD have to be smart?
+- Number of discrete wires from the switch?
+
+
+Questions
+=========
+1. What is the defition of electronic in Device?
+	a. Alex uses "electronic" to denote when a device should have a device power wire
+2. Should there exist a command between the current sensor and pinch detection?
+3. Should there exist a command between the position sensor and the win controller?
+4. Should DWinSwitch be a reference or instantiated in the PWinSubSysFA?
+5. Other remote is missing completely from our model. Should we have this?
+6. Is powerFuse our DoorInline? It seems that the fuse is something seperate. Or is it the electric center?
+7. Should we have a doorModule ECU?
+8. The constraints are different for for the WinSubSysDpl between the two models. Which one are we going to go with?
+9. What is the Electric Center doing should we do something with it?
+
+Changes Made to powerWindowFull
+=================================
+- Constrained the window controller config based on the feature model.
+- Moved the WinMotor driver is itself if it is smart constraint to deployment
+- Correctly popagated the BCM from the architecture level to the different levels of abstraction.
+- Added bus topology
+- Added connection lengths, mass, and optimization goals for them
+- Changed the DWinSwitch in the passenger device node from a reference to instance of DeviceNode since it is a physical switch. I also added a deployment constraint for DWinSwitch functional device to be deployed to the new switch.
+
+Bugs
+====
+- When I run --moo from the command line it does not output to the file it goes to standard out.
+- Check out the bugged file. If I define mass and length before the constraint it works but it fails otherwise...
+- See email sent to jimmy 4/14/15
+	- Workaround for bug is to not have multiply in the mass constraint...
+
+Sources of Variability
+======================
+1. Feature model - For each configuration of the feature model we have a set of instances that will be generated. From our feature model it can be seen that we have 3 variations of the feature model.
+2. Functional Analysis Architecture - The only source of variability here should be whether we have the pinch detection subsystem or not. Everything else at this level should be constrained.
+3. Device Node Architecture - There are two main sources of variability at this level
+	a. Device node smartness - whether a device is smart or not
+	b. DoorInline connections - What connections the DoorInline provides.
+4. Functional Deployment - This is the richest level of variability as its the allocation of Functional Analysis components to Device Nodes. The one main constraint that we have (and added for this) was that functional analysis components of a subsystem can only be deployed on device nodes of the same subsystem.
+5. LoadPowerDeviceTopology - Restricted variability more than it added it.
+6. DevicePower - No effect
+7. SwitchDiscreteDT - Added a ton of variability suprisingly. It almost tripled our instances for the driver only system.
+8. BusDT - Restricting variability. I find this interesting though because we are adding variability with having a bus or not but it seems to maybe restrict the deployments?
+9. System Hardware Level - At the system level we have the possibility of having a BCM or not. This precense is propagated to the lower subsystems.
+
+Things that I don't like about the model
+========================================
+The deployment of analysis functions onto device nodes has no coorelation with the device toplogy. (i.e. the commands that are defined in the functional analysis)
+ - For example, Alex's model doesnt do anthing with the commands as well as the slides.

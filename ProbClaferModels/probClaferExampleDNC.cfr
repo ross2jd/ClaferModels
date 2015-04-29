@@ -1,7 +1,7 @@
 // probClaferExample4.cfr
 // Author: Jordan A. Ross
 // Date: 1/26/2015
-// Last updated: 2/23/2015 
+// Last updated: 3/5/2015 
 //
 // NOTE:: This model does not compile, it is used as a medium to show how new constructs will
 // be used in Clafer. 
@@ -20,37 +20,55 @@ abstract Probability : Rational
         [numerator = parent.denominator.ref - parent.numerator.ref]
         [denominator = parent.denominator.ref]
 
+// Function inspiration by Andrzej for scaling rational numbers
+abstract GCD (x :Rational) :integer
+    [x.numerator % this = 0] 
+    [x.denominator % this = 0]
+    [this >= 1]
+    [all k :integer | k > this => x.numerator % k != 0 || x.denominator % k != 0]
+
+abstract reduce (x :Rational) :Rational
+    [ numerator = x.numerator / GCD x ]
+    [ denominator = x.denominator / GCD x ]
+
 enum FailureClassification = Omission | Comission
 
 abstract Failure : Probability
-    class : FailureClassification
+    class -> FailureClassification
 
 abstract BasicEvent : Failure
 
 
 abstract FailureExpression : Failure
-    operands -> Failure *
-    // C: The failure classification for this clafer is equal to that of the operands
-    [this.class in operands.class]
-    // C: All failure classifications are the same for the operands
-    [all c : operands.class | c = this.class]
+    operand -> Failure *
+    [one operand.class]
+    [this.class = operand.class]
 
 
 abstract AND : FailureExpression
-    [numerator = product operands.numerator]
-    [denominator = product operands.denominator]
+    [numerator = product operand.numerator]
+    [denominator = product operand.denominator]
 
 abstract OR : FailureExpression
-    [[numerator = product tempProbability.complement.numerator]
-    [denominator = product tempProbability.complement.denominator]
-    tempProbability : Probability
-    [tempProbability.numerator = product operands.complement.numerator]
-    [tempProbability.denominator = product operands.complement.denominator]
+    // Create a reference to the set of operands and compute the complement of each probability
+    // in the set.
+    myOp -> Probability * = operand
+        complement : Rational
+            [numerator = parent.denominator.ref - parent.numerator.ref] // need the refs here
+            [denominator = parent.denominator.ref] // need the refs here
+
+    // Get the product of the complements probability
+    complProductProb : Probability
+    [complProductProb.numerator = product operand.complement.numerator]
+    [complProductProb.denominator = product operand.complement.denominator]
+
+    [numerator = product complProductProb.complement.numerator]
+    [denominator = product complProductProb.complement.denominator]
 
 abstract NOP : FailureExpression
-    [#operands = 1]
-    [numerator  = operands.numerator.ref]
-    [denominator = operands.denominator.ref]
+    [one operand]
+    [numerator  = operand.numerator.ref]
+    [denominator = operand.denominator.ref]
     
 
 abstract ComponentFailure : Failure
@@ -118,7 +136,7 @@ SimpleSystem : System
         pFailure : PortFailure
             // We redefine 'exp' in PortFailure to be a specific FailureExpression, namely NOP
             exp : NOP
-            [exp.operands = NoFailure]
+            [exp.operand = NoFailure]
     compA : Component
         dataOut : OutPort
             [failure = compA.pFailure]
@@ -133,7 +151,7 @@ SimpleSystem : System
         pFailure : PortFailure
             // We redefine 'exp' in PortFailure to be a specific FailureExpression, namely NOP
             exp : NOP
-            [exp.operands = compA.internalFailure]
+            [exp.operand = compA.internalFailure]
 
     compB : Component
         dataOut : OutPort
@@ -148,7 +166,7 @@ SimpleSystem : System
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
             exp : NOP
-            [exp.operands= compB.internalFailure]
+            [exp.operand= compB.internalFailure]
     compC : Component
         dataOut : OutPort
             [failure = compC.pFailure]
@@ -162,7 +180,7 @@ SimpleSystem : System
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
             exp : NOP
-            [exp.operands = compC.internalFailure]
+            [exp.operand = compC.internalFailure]
     compD : Component
         dataOut : OutPort
             [failure = compD.pFailure]
@@ -176,7 +194,7 @@ SimpleSystem : System
         // Port failures. This will define a failure that we can link to a port
         pFailure : PortFailure
             exp : OR 
-            [exp.operands = compD.dataIn.failure, compD.internalFailure]
+            [exp.operand = compD.dataIn.failure, compD.internalFailure]
     compY : SinkComponent
         dataIn1 : InPort
         dataIn2 : InPort
@@ -184,7 +202,7 @@ SimpleSystem : System
         
         cFailure : ComponentFailure
             exp : AND
-            [exp.operands= (compY.dataIn1.failure, compY.dataIn2.failure, compY.dataIn3.failure)]
+            [exp.operand= (compY.dataIn1.failure, compY.dataIn2.failure, compY.dataIn3.failure)]
 
 
     // Now lets define some connections

@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<style>.identifier{}
+.keyword{font-weight:bold}
+.reference{}
+.code { background-color: lightgray; padding: 5px 5px 5px 5px; border: 1px solid darkgray; margin-bottom: 15px; 
+        font-family: Pragmata, Menlo, 'DejaVu LGC Sans Mono', 'DejaVu Sans Mono', Consolas, 'Everson Mono', 'Lucida Console', 'Andale Mono', 'Nimbus Mono L', 'Liberation Mono', FreeMono, 'Osaka Monospaced', Courier, 'New Courier', monospace; }
+.standalonecomment { color: green; font-style:italic }
+.inlinecomment { color: green; padding-left:20px; font-style:italic }
+.error{background-color: yellow; color: red }
+.indent{padding-left:20px}
+a[href$='Lookup failed'] {color: red}
+a[href$='Uid not found'] {color: red}
+a[href$='Ambiguous name'] {color: yellow}
+
+</style></head>
+<body>
+
+<div>
+<span class="claferDecl" id="c0_Dist">Dist</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_switchToMotor">switchToMotor</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 40</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_switchToDoorModule">switchToDoorModule</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 20</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_motorToDoorModule">motorToDoorModule</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 30</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineToSwitch">inlineToSwitch</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 45</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineToMotor">inlineToMotor</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 45</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineToDoorModule">inlineToDoorModule</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 35</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_doorSpliceToSwitch">doorSpliceToSwitch</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 25</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_doorSpliceToMotor">doorSpliceToMotor</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 25</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_doorSpliceToDoorModule">doorSpliceToDoorModule</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 15</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineDtoInlineFP">inlineDtoInlineFP</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 170</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineDtoBCM">inlineDtoBCM</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 40</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineFPtoBCM">inlineFPtoBCM</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 130</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineDtoPowerFuse">inlineDtoPowerFuse</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 40</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_inlineFPtoPowerFuse">inlineFPtoPowerFuse</span><span class="keyword"> : </span><a href="#integer"><span class="reference">integer</span></a> = 130</div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PWSubsystemConfig">PWSubsystemConfig</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_basicUpDown">basicUpDown</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_express">express</span> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_expressUp">expressUp</span> ?</div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_otherRemoteControl">otherRemoteControl</span> ?</div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Device">Device</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_electronic">electronic</span> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_smart">smart</span> ?</div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_electronic"><span class="reference">electronic</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_deployedFrom">deployedFrom</span><span class="keyword"> -> </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a> *
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a> = <a href="#parent"><span class="reference">parent</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_AnalysisFunction">AnalysisFunction</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_deployedTo">deployedTo</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#parent"><span class="reference">parent</span></a> in <a href="#this"><span class="reference">this</span></a>.<a href="#c0_deployedFrom"><span class="reference">deployedFrom</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FunctionalDevice">FunctionalDevice</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_AFConnector">AFConnector</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_src">src</span><span class="keyword"> -> </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_dest">dest</span><span class="keyword"> -> </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_ECU">ECU</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PWSubsystemFunctionalArchitecture">PWSubsystemFunctionalArchitecture</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WinController">WinController</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_Motor">Motor</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_Switch">Switch</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_CurrentSensor">CurrentSensor</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PositionSensor">PositionSensor</span><span class="keyword"> : </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PinchDetection">PinchDetection</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_OtherRemoteArbiter">OtherRemoteArbiter</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conCommand">conCommand</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_Motor"><span class="reference">Motor</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conCurrent">conCurrent</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_pinchDetectionConnections">pinchDetectionConnections</span> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_conPositionToWinController">conPositionToWinController</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_conPositionToPinchDetection">conPositionToPinchDetection</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_conCurrentToPinchDetection">conCurrentToPinchDetection</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_conPinchDetectionToWinController">conPinchDetectionToWinController</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_config">config</span><span class="keyword"> -> </span><a href="#c0_PWSubsystemConfig"><span class="reference">PWSubsystemConfig</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> &lt;=&gt; <a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> &lt;=&gt; <a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> &lt;=&gt; <a href="#c0_pinchDetectionConnections"><span class="reference">pinchDetectionConnections</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> &lt;=&gt; <a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DPWSubsystemFunctionalArchitecture">DPWSubsystemFunctionalArchitecture</span><span class="keyword"> : </span><a href="#c0_PWSubsystemFunctionalArchitecture"><span class="reference">PWSubsystemFunctionalArchitecture</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conArbitratedRequestFromOtherRemoteArbiterToWinController">conArbitratedRequestFromOtherRemoteArbiterToWinController</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conRequestFromMainSwitchToOtherRemoteArbiter">conRequestFromMainSwitchToOtherRemoteArbiter</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_Switch"><span class="reference">Switch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conRequestFromMainSwitchToWinController">conRequestFromMainSwitchToWinController</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_Switch"><span class="reference">Switch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> &lt;=&gt; <a href="#c0_conRequestFromMainSwitchToOtherRemoteArbiter"><span class="reference">conRequestFromMainSwitchToOtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> &lt;=&gt; <a href="#c0_conArbitratedRequestFromOtherRemoteArbiterToWinController"><span class="reference">conArbitratedRequestFromOtherRemoteArbiterToWinController</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> &lt;=&gt; <a href="#c0_conRequestFromMainSwitchToWinController"><span class="reference">conRequestFromMainSwitchToWinController</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FPPWSubsystemFunctionalArchitecture">FPPWSubsystemFunctionalArchitecture</span><span class="keyword"> : </span><a href="#c0_PWSubsystemFunctionalArchitecture"><span class="reference">PWSubsystemFunctionalArchitecture</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_MasterSwitch">MasterSwitch</span><span class="keyword"> -> </span><a href="#c0_FunctionalDevice"><span class="reference">FunctionalDevice</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_SwitchArbiter">SwitchArbiter</span><span class="keyword"> : </span><a href="#c0_AnalysisFunction"><span class="reference">AnalysisFunction</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conArbitratedReqFromSwitchArbiterToOtherRemoteArbiter">conArbitratedReqFromSwitchArbiterToOtherRemoteArbiter</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conArbitratedReqFromSwitchArbiterToWinController">conArbitratedReqFromSwitchArbiterToWinController</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_WinController"><span class="reference">WinController</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conPReqFromSwitchToSwitchArbiter">conPReqFromSwitchToSwitchArbiter</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_Switch"><span class="reference">Switch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> &lt;=&gt; <a href="#c0_conArbitratedReqFromSwitchArbiterToOtherRemoteArbiter"><span class="reference">conArbitratedReqFromSwitchArbiterToOtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> &lt;=&gt; <a href="#c0_conArbitratedReqFromSwitchArbiterToWinController"><span class="reference">conArbitratedReqFromSwitchArbiterToWinController</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_conFromMainSwitchToSwitchArbiter">conFromMainSwitchToSwitchArbiter</span><span class="keyword"> : </span><a href="#c0_AFConnector"><span class="reference">AFConnector</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_src"><span class="reference">src</span></a> = <a href="#c0_MasterSwitch"><span class="reference">MasterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dest"><span class="reference">dest</span></a> = <a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FPPWSubsystemHardware">FPPWSubsystemHardware</span><span class="keyword"> : </span><a href="#c0_PWSubsystemHardware"><span class="reference">PWSubsystemHardware</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_switchRequestJunction">switchRequestJunction</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_electronic"><span class="reference">electronic</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_masterSwitch">masterSwitch</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PWSubsystemHardware">PWSubsystemHardware</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_doorModule">doorModule</span><span class="keyword"> : </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_switch">switch</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_motor">motor</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_bcm">bcm</span><span class="keyword"> -> </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_localComponents">localComponents</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a> 0..4 </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_localComponents"><span class="reference">localComponents</span></a> = <a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a>, <a href="#c0_motor"><span class="reference">motor</span></a>, <a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a>, <a href="#c0_doorModule"><span class="reference">doorModule</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_localSmartComponents">localSmartComponents</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a> 0..4 </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a> = <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a>, <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a>, <a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a>, <a href="#c0_doorModule"><span class="reference">doorModule</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_smartSwitch">smartSwitch</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switch"><span class="reference">switch</span></a> = <a href="#this"><span class="reference">this</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_dumbSwitch">dumbSwitch</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_switch"><span class="reference">switch</span></a> = <a href="#this"><span class="reference">this</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> xor <a href="#c0_dumbSwitch"><span class="reference">dumbSwitch</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_smartMotor">smartMotor</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motor"><span class="reference">motor</span></a> = <a href="#this"><span class="reference">this</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_dumbMotor">dumbMotor</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motor"><span class="reference">motor</span></a> = <a href="#this"><span class="reference">this</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> xor <a href="#c0_dumbMotor"><span class="reference">dumbMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_powerFuse">powerFuse</span><span class="keyword"> : </span><a href="#c0_Device"><span class="reference">Device</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_electronic"><span class="reference">electronic</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_deployedFrom"><span class="reference">deployedFrom</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_busType"><span class="reference">busType</span></a> &lt;=&gt; # <a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a> &gt; 1 <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_busType"><span class="reference">busType</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = 0 <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_busLength">busLength</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_busMass">busMass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_busMass"><span class="reference">busMass</span></a> = <a href="#c0_busLength"><span class="reference">busLength</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_busType">busType</span> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_branchToDoorModule">branchToDoorModule</span>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bcm"><span class="reference">bcm</span></a> &amp;&amp; <a href="#c0_doorModule"><span class="reference">doorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_motorToDoorModule"><span class="reference">motorToDoorModule</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp;  ! <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span>  ! <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_motorToDoorModule"><span class="reference">motorToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span>  ! <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp;  ! <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_branchToSwitch">branchToSwitch</span>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bcm"><span class="reference">bcm</span></a> &amp;&amp; <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp;  ! <a href="#c0_doorModule"><span class="reference">doorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span>  ! <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_branchToAllSmartComponents">branchToAllSmartComponents</span>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_bcm"><span class="reference">bcm</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToMotor"><span class="reference">inlineToMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToMotor"><span class="reference">inlineToMotor</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_doorSpliceToDoorModule"><span class="reference">doorSpliceToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_doorSpliceToMotor"><span class="reference">doorSpliceToMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp; <a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_doorSpliceToMotor"><span class="reference">doorSpliceToMotor</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_localBusOnly">localBusOnly</span>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_bcm"><span class="reference">bcm</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_doorModule"><span class="reference">doorModule</span></a> &amp;&amp; <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> &amp;&amp;  ! <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_doorModule"><span class="reference">doorModule</span></a> &amp;&amp; <a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> &amp;&amp;  ! <a href="#c0_smartSwitch"><span class="reference">smartSwitch</span></a> =&gt; <a href="#c0_busLength"><span class="reference">busLength</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_motorToDoorModule"><span class="reference">motorToDoorModule</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_dist">dist</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_inlineToBCM">inlineToBCM</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_inlineToFuse">inlineToFuse</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DPWSubsystemDeploymentAndWiring">DPWSubsystemDeploymentAndWiring</span><span class="keyword"> : </span><a href="#c0_PWSubsystemDeploymentAndWiring"><span class="reference">PWSubsystemDeploymentAndWiring</span></a>
+  <div class="indent">
+  <span class="keyword">[</span>  ! <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wireRequestIndirect"><span class="reference">wireRequestIndirect</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &lt;=&gt; <a href="#c0_wireRequestIndirect"><span class="reference">wireRequestIndirect</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireRequestIndirect">wireRequestIndirect</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wireRequestDirect"><span class="reference">wireRequestDirect</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span>  ! <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wireRequestDirect"><span class="reference">wireRequestDirect</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_wireRequestDirect"><span class="reference">wireRequestDirect</span></a> &amp;&amp; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wireRequestDirect"><span class="reference">wireRequestDirect</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireRequestDirect">wireRequestDirect</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_wireFromLoadPowerFuseToMotorDriver"><span class="reference">wireFromLoadPowerFuseToMotorDriver</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_FPPWSubsystemDeploymentAndWiring">FPPWSubsystemDeploymentAndWiring</span><span class="keyword"> : </span><a href="#c0_PWSubsystemDeploymentAndWiring"><span class="reference">PWSubsystemDeploymentAndWiring</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_fpfa">fpfa</span><span class="keyword"> -> </span><a href="#c0_FPPWSubsystemFunctionalArchitecture"><span class="reference">FPPWSubsystemFunctionalArchitecture</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_fpht">fpht</span><span class="keyword"> -> </span><a href="#c0_FPPWSubsystemHardware"><span class="reference">FPPWSubsystemHardware</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a> =&gt; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> =&gt; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a> =&gt; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> &#124;&#124; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> &amp;&amp;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> &#124;&#124; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> &amp;&amp; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> &#124;&#124; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &#124;&#124;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &amp;&amp; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_conPReqFromSwitchToSwitchArbiter"><span class="reference">conPReqFromSwitchToSwitchArbiter</span></a> =&gt; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &#124;&#124; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wirePReqFromSwitchToSwitchArbiter"><span class="reference">wirePReqFromSwitchToSwitchArbiter</span></a> &amp;&amp;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_wirePReqFromSwitchToSwitchArbiter"><span class="reference">wirePReqFromSwitchToSwitchArbiter</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wirePReqFromSwitchToSwitchArbiter">wirePReqFromSwitchToSwitchArbiter</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> =&gt; <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> =&gt; <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = 0 <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wireArbitratedReqFromSwitchArbiterToOtherRemoteArbiter"><span class="reference">wireArbitratedReqFromSwitchArbiterToOtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> &lt;=&gt; <a href="#c0_wireArbitratedReqFromSwitchArbiterToOtherRemoteArbiter"><span class="reference">wireArbitratedReqFromSwitchArbiterToOtherRemoteArbiter</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireArbitratedReqFromSwitchArbiterToOtherRemoteArbiter">wireArbitratedReqFromSwitchArbiterToOtherRemoteArbiter</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <span class="keyword">no</span> <a href="#c0_wireArbitratedReqFromSwitchArbiterToWindowController"><span class="reference">wireArbitratedReqFromSwitchArbiterToWindowController</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span>  ! <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> =&gt; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> &#124;&#124; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp;  ! <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &lt;=&gt; <a href="#c0_wireArbitratedReqFromSwitchArbiterToWindowController"><span class="reference">wireArbitratedReqFromSwitchArbiterToWindowController</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireArbitratedReqFromSwitchArbiterToWindowController">wireArbitratedReqFromSwitchArbiterToWindowController</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fpfa"><span class="reference">fpfa</span></a> =&gt; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a> &amp;&amp;  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> =&gt; <a href="#c0_wirePowerFromMSToSwitch"><span class="reference">wirePowerFromMSToSwitch</span></a> &#124;&#124; <a href="#c0_wireDiscreteFromMSToSwitch"><span class="reference">wireDiscreteFromMSToSwitch</span></a> &#124;&#124; <a href="#c0_wireDiscreteFromDoorModuleOrBCMToSwitch"><span class="reference">wireDiscreteFromDoorModuleOrBCMToSwitch</span></a> &#124;&#124; <a href="#c0_wirePowerFromDoorModuleOrBCMToSwitch"><span class="reference">wirePowerFromDoorModuleOrBCMToSwitch</span></a> &#124;&#124; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> xor <a href="#c0_wireDiscreteFromMSToSmartComponent"><span class="reference">wireDiscreteFromMSToSmartComponent</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> =&gt;  ! <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &amp;&amp; <a href="#c0_wireDiscreteFromMSToJunction"><span class="reference">wireDiscreteFromMSToJunction</span></a> &amp;&amp; <a href="#c0_fpfa"><span class="reference">fpfa</span></a>.<a href="#c0_SwitchArbiter"><span class="reference">SwitchArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a> =&gt;  ! <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_wireDiscreteFromMSToSmartComponent"><span class="reference">wireDiscreteFromMSToSmartComponent</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_distMainSwitchToLocalInline">distMainSwitchToLocalInline</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineDtoInlineFP"><span class="reference">inlineDtoInlineFP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_wireFromMS">wireFromMS</span> ?
+    <div class="indent">
+    <span class="claferDecl" id="c0_wirePowerFromMSToSwitch">wirePowerFromMSToSwitch</span><span class="keyword"> : </span><a href="#c0_PowerWire"><span class="reference">PowerWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_wireDiscreteFromMSToSmartComponent"><span class="reference">wireDiscreteFromMSToSmartComponent</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_wireDiscreteFromMSToSwitch">wireDiscreteFromMSToSwitch</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_wireDiscreteFromMSToSmartComponent"><span class="reference">wireDiscreteFromMSToSmartComponent</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_wirePowerFromDoorModuleOrBCMToSwitch">wirePowerFromDoorModuleOrBCMToSwitch</span><span class="keyword"> : </span><a href="#c0_PowerWire"><span class="reference">PowerWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &#124;&#124; <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_wireDiscreteFromDoorModuleOrBCMToSwitch">wireDiscreteFromDoorModuleOrBCMToSwitch</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &#124;&#124; <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToDoorModule"><span class="reference">switchToDoorModule</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+    </div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_wireDiscreteFromMSToJunction">wireDiscreteFromMSToJunction</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_wireDiscreteFromMSToSmartComponent"><span class="reference">wireDiscreteFromMSToSmartComponent</span></a> <span class="keyword">]</span></div>
+      <div class="indent">
+      <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+    </div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireDiscreteFromMSToSmartComponent">wireDiscreteFromMSToSmartComponent</span><span class="keyword"> : </span><a href="#c0_DiscreteWire"><span class="reference">DiscreteWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_fpht"><span class="reference">fpht</span></a>.<a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToMotor"><span class="reference">inlineToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_distMainSwitchToLocalInline"><span class="reference">distMainSwitchToLocalInline</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> * <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineDtoBCM"><span class="reference">inlineDtoBCM</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_wirePowerFromMSToSwitch"><span class="reference">wirePowerFromMSToSwitch</span></a> &amp;&amp; <span class="keyword">no</span> <a href="#c0_wirePowerFromDoorModuleOrBCMToSwitch"><span class="reference">wirePowerFromDoorModuleOrBCMToSwitch</span></a> &lt;=&gt; <a href="#c0_wireFromLoadPowerFuseToMotorDriver"><span class="reference">wireFromLoadPowerFuseToMotorDriver</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PWSubsystemDeploymentAndWiring">PWSubsystemDeploymentAndWiring</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_ht">ht</span><span class="keyword"> -> </span><a href="#c0_PWSubsystemHardware"><span class="reference">PWSubsystemHardware</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_fa">fa</span><span class="keyword"> -> </span><a href="#c0_PWSubsystemFunctionalArchitecture"><span class="reference">PWSubsystemFunctionalArchitecture</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_Switch"><span class="reference">Switch</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_Motor"><span class="reference">Motor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_motorDriver">motorDriver</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localComponents"><span class="reference">localComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &amp;&amp; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a> =&gt; <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localComponents"><span class="reference">localComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PinchDetection"><span class="reference">PinchDetection</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span>  ! <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> &#124;&#124; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> &amp;&amp;  ! <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_CurrentSensor"><span class="reference">CurrentSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localComponents"><span class="reference">localComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_OtherRemoteArbiter"><span class="reference">OtherRemoteArbiter</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> in <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_distFromMotorToMotorDriver">distFromMotorToMotorDriver</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_distFromMotorToMotorDriver"><span class="reference">distFromMotorToMotorDriver</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_switchToMotor"><span class="reference">switchToMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_distFromMotorToMotorDriver"><span class="reference">distFromMotorToMotorDriver</span></a> = 0 <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_distFromMotorToMotorDriver"><span class="reference">distFromMotorToMotorDriver</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_motorToDoorModule"><span class="reference">motorToDoorModule</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_distFromMotorToMotorDriver"><span class="reference">distFromMotorToMotorDriver</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToMotor"><span class="reference">inlineToMotor</span></a> + <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireCommand">wireCommand</span><span class="keyword"> : </span><a href="#c0_PowerWire"><span class="reference">PowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_distFromMotorToMotorDriver"><span class="reference">distFromMotorToMotorDriver</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> &lt;=&gt; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> &lt;=&gt; <span class="keyword">no</span> <a href="#c0_wireCommand"><span class="reference">wireCommand</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wirePosition">wirePosition</span><span class="keyword"> : </span><a href="#c0_AnalogWire"><span class="reference">AnalogWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a> = <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = 2 * <a href="#c0_distFromMotorToMotorDriver"><span class="reference">distFromMotorToMotorDriver</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_wirePosition"><span class="reference">wirePosition</span></a> &lt;=&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> &amp;&amp; <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> &amp;&amp; <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_numberOfDiscreteWiresFromSwitch">numberOfDiscreteWiresFromSwitch</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_numberOfDiscreteWiresFromSwitch"><span class="reference">numberOfDiscreteWiresFromSwitch</span></a> = if <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a> then 3 else 2 <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span>  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> &lt;=&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span>  ! <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_smart"><span class="reference">smart</span></a> =&gt; <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> &lt;=&gt; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_WinController"><span class="reference">WinController</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> &#124;&#124; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_config"><span class="reference">config</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> &amp;&amp; <a href="#c0_fa"><span class="reference">fa</span></a>.<a href="#c0_PositionSensor"><span class="reference">PositionSensor</span></a>.<a href="#c0_deployedTo"><span class="reference">deployedTo</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireFromLoadPowerFuseToMotorDriver">wireFromLoadPowerFuseToMotorDriver</span><span class="keyword"> : </span><a href="#c0_PowerWire"><span class="reference">PowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_powerFuse"><span class="reference">powerFuse</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToMotor"><span class="reference">inlineToMotor</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_motorDriver"><span class="reference">motorDriver</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_bcm"><span class="reference">bcm</span></a> =&gt; <a href="#c0_length"><span class="reference">length</span></a> = 0 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> &lt;=&gt; <a href="#c0_wireFromDevicePowerFuseToSwitch"><span class="reference">wireFromDevicePowerFuseToSwitch</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireFromDevicePowerFuseToSwitch">wireFromDevicePowerFuseToSwitch</span><span class="keyword"> : </span><a href="#c0_DevicePowerWire"><span class="reference">DevicePowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_powerFuse"><span class="reference">powerFuse</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToSwitch"><span class="reference">inlineToSwitch</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#c0_electronic"><span class="reference">electronic</span></a> &lt;=&gt; <a href="#c0_wireFromDevicePowerFuseToMotor"><span class="reference">wireFromDevicePowerFuseToMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireFromDevicePowerFuseToMotor">wireFromDevicePowerFuseToMotor</span><span class="keyword"> : </span><a href="#c0_DevicePowerWire"><span class="reference">DevicePowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_powerFuse"><span class="reference">powerFuse</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_motor"><span class="reference">motor</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToMotor"><span class="reference">inlineToMotor</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> &lt;=&gt; <a href="#c0_wireFromDevicePowerFuseToDoorModule"><span class="reference">wireFromDevicePowerFuseToDoorModule</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_wireFromDevicePowerFuseToDoorModule">wireFromDevicePowerFuseToDoorModule</span><span class="keyword"> : </span><a href="#c0_DevicePowerWire"><span class="reference">DevicePowerWire</span></a> ?
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_powerFuse"><span class="reference">powerFuse</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_doorModule"><span class="reference">doorModule</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_length"><span class="reference">length</span></a> = <a href="#c0_ht"><span class="reference">ht</span></a>.<a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> + <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineToDoorModule"><span class="reference">inlineToDoorModule</span></a> <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_WireConnector">WireConnector</span>
+  <div class="indent">
+  <span class="claferDecl" id="c1_src">src</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_dest">dest</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c1_src"><span class="reference">src</span></a>.<a href="#ref"><span class="reference">ref</span></a> != <a href="#c1_dest"><span class="reference">dest</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_length">length</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_mass">mass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DiscreteWire">DiscreteWire</span><span class="keyword"> : </span><a href="#c0_WireConnector"><span class="reference">WireConnector</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_AnalogWire">AnalogWire</span><span class="keyword"> : </span><a href="#c0_WireConnector"><span class="reference">WireConnector</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PowerWire">PowerWire</span><span class="keyword"> : </span><a href="#c0_WireConnector"><span class="reference">WireConnector</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_DevicePowerWire">DevicePowerWire</span><span class="keyword"> : </span><a href="#c0_WireConnector"><span class="reference">WireConnector</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_mass"><span class="reference">mass</span></a> = <a href="#c0_length"><span class="reference">length</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PowerWindowSystem">PowerWindowSystem</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_BCM">BCM</span><span class="keyword"> : </span><a href="#c0_ECU"><span class="reference">ECU</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_driverFAConfig">driverFAConfig</span><span class="keyword"> : </span><a href="#c0_PWSubsystemConfig"><span class="reference">PWSubsystemConfig</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_driverFA">driverFA</span><span class="keyword"> : </span><a href="#c0_DPWSubsystemFunctionalArchitecture"><span class="reference">DPWSubsystemFunctionalArchitecture</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a> = <a href="#c0_driverFAConfig"><span class="reference">driverFAConfig</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_frontPassengerFAConfig">frontPassengerFAConfig</span><span class="keyword"> : </span><a href="#c0_PWSubsystemConfig"><span class="reference">PWSubsystemConfig</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_frontPassengerFA">frontPassengerFA</span><span class="keyword"> : </span><a href="#c0_FPPWSubsystemFunctionalArchitecture"><span class="reference">FPPWSubsystemFunctionalArchitecture</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_config"><span class="reference">config</span></a> = <a href="#c0_frontPassengerFAConfig"><span class="reference">frontPassengerFAConfig</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_MasterSwitch"><span class="reference">MasterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_driverFA"><span class="reference">driverFA</span></a>.<a href="#c0_Switch"><span class="reference">Switch</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_driverHardware">driverHardware</span><span class="keyword"> : </span><a href="#c0_PWSubsystemHardware"><span class="reference">PWSubsystemHardware</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_bcm"><span class="reference">bcm</span></a> = <a href="#c0_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineDtoBCM"><span class="reference">inlineDtoBCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineDtoPowerFuse"><span class="reference">inlineDtoPowerFuse</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_frontPassengerHardware">frontPassengerHardware</span><span class="keyword"> : </span><a href="#c0_FPPWSubsystemHardware"><span class="reference">FPPWSubsystemHardware</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_bcm"><span class="reference">bcm</span></a> = <a href="#c0_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_masterSwitch"><span class="reference">masterSwitch</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a>.<a href="#c0_switch"><span class="reference">switch</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToBCM"><span class="reference">inlineToBCM</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineFPtoBCM"><span class="reference">inlineFPtoBCM</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_dist"><span class="reference">dist</span></a>.<a href="#c0_inlineToFuse"><span class="reference">inlineToFuse</span></a> = <a href="#c0_Dist"><span class="reference">Dist</span></a>.<a href="#c0_inlineFPtoPowerFuse"><span class="reference">inlineFPtoPowerFuse</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_driverDeploymentAndWiring">driverDeploymentAndWiring</span><span class="keyword"> : </span><a href="#c0_DPWSubsystemDeploymentAndWiring"><span class="reference">DPWSubsystemDeploymentAndWiring</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a> = <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a> = <a href="#c0_driverFA"><span class="reference">driverFA</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_frontPassengerDeploymentAndWiring">frontPassengerDeploymentAndWiring</span><span class="keyword"> : </span><a href="#c0_FPPWSubsystemDeploymentAndWiring"><span class="reference">FPPWSubsystemDeploymentAndWiring</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_ht"><span class="reference">ht</span></a> = <a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a> <span class="keyword">]</span></div>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#c0_fa"><span class="reference">fa</span></a> = <a href="#c0_frontPassengerFA"><span class="reference">frontPassengerFA</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_allSmartComponents">allSmartComponents</span><span class="keyword"> -> </span><a href="#c0_Device"><span class="reference">Device</span></a> 0..8 </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_allSmartComponents"><span class="reference">allSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> = <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a>++<a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a>.<a href="#c0_localSmartComponents"><span class="reference">localSmartComponents</span></a>.<a href="#ref"><span class="reference">ref</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_quality">quality</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_numberOfSmartComponents">numberOfSmartComponents</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a> = # <a href="#c0_allSmartComponents"><span class="reference">allSmartComponents</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_wireLength">wireLength</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a> = sum <a href="#c0_WireConnector"><span class="reference">WireConnector</span></a>.<a href="#c0_length"><span class="reference">length</span></a> + <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a>.<a href="#c0_busLength"><span class="reference">busLength</span></a> + <a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a>.<a href="#c0_busLength"><span class="reference">busLength</span></a></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_wireMass">wireMass</span><span class="keyword"> ->> </span><a href="#integer"><span class="reference">integer</span></a> = sum <a href="#c0_WireConnector"><span class="reference">WireConnector</span></a>.<a href="#c0_mass"><span class="reference">mass</span></a> + <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a>.<a href="#c0_busMass"><span class="reference">busMass</span></a> + <a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a>.<a href="#c0_busMass"><span class="reference">busMass</span></a></div>
+  </div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_system">system</span><span class="keyword"> : </span><a href="#c0_PowerWindowSystem"><span class="reference">PowerWindowSystem</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_driverFAConfig"><span class="reference">driverFAConfig</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_driverFAConfig"><span class="reference">driverFAConfig</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a>.<a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_driverHardware"><span class="reference">driverHardware</span></a>.<a href="#c0_busType"><span class="reference">busType</span></a>.<a href="#c0_branchToAllSmartComponents"><span class="reference">branchToAllSmartComponents</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_frontPassengerFAConfig"><span class="reference">frontPassengerFAConfig</span></a>.<a href="#c0_express"><span class="reference">express</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_frontPassengerFAConfig"><span class="reference">frontPassengerFAConfig</span></a>.<a href="#c0_express"><span class="reference">express</span></a>.<a href="#c0_expressUp"><span class="reference">expressUp</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_frontPassengerFAConfig"><span class="reference">frontPassengerFAConfig</span></a>.<a href="#c0_otherRemoteControl"><span class="reference">otherRemoteControl</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a>.<a href="#c0_smartMotor"><span class="reference">smartMotor</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a>.<a href="#c0_busType"><span class="reference">busType</span></a>.<a href="#c0_branchToAllSmartComponents"><span class="reference">branchToAllSmartComponents</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_frontPassengerHardware"><span class="reference">frontPassengerHardware</span></a>.<a href="#c0_switchRequestJunction"><span class="reference">switchRequestJunction</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_BCM"><span class="reference">BCM</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <span class="keyword">no</span> <a href="#c0_BCM"><span class="reference">BCM</span></a>.<a href="#c0_deployedFrom"><span class="reference">deployedFrom</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+&lt;&lt;min <a href="#c0_system"><span class="reference">system</span></a>.<a href="#c0_quality"><span class="reference">quality</span></a>.<a href="#c0_numberOfSmartComponents"><span class="reference">numberOfSmartComponents</span></a>&gt;&gt;</div>
+
+
+<div>
+&lt;&lt;min <a href="#c0_system"><span class="reference">system</span></a>.<a href="#c0_quality"><span class="reference">quality</span></a>.<a href="#c0_wireLength"><span class="reference">wireLength</span></a>&gt;&gt;</div>
+
+
+<div>
+&lt;&lt;min <a href="#c0_system"><span class="reference">system</span></a>.<a href="#c0_quality"><span class="reference">quality</span></a>.<a href="#c0_wireMass"><span class="reference">wireMass</span></a>&gt;&gt;</div>
+
+</body>
+</html>
